@@ -179,7 +179,7 @@ export default function HomePage() {
                             {t('hero.title')}<br />
                             <span className="relative inline-block mt-2">
                                 <span className="relative z-10 text-gray-900">{t('hero.titleAccent')}</span>
-                                <svg className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[60%] w-[130%] -z-0 text-yellow-green-500 opacity-80" viewBox="0 0 500 500" preserveAspectRatio="none">
+                                <svg className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[130%] -z-0 text-yellow-green-500 opacity-80" viewBox="0 0 500 500" preserveAspectRatio="none">
                                     <g transform="matrix(1, 0, 0, 1, 209.8228, 182.775528)">
                                         <path d="M 266.104 36.352 C 307.627 31.725 228.584 24.012 192.565 21.313 C 156.544 18.613 131.032 13.6 206.07 15.529 C 281.112 17.071 273.607 8.973 159.546 1.647 C 44.985 -6.066 -143.12 0.104 -143.12 0.104 C -223.66 -0.281 -189.14 56.018 -195.14 72.599 C -201.15 89.181 -192.65 102.292 -184.64 112.704 C -176.64 122.73 -186.64 125.043 -156.12 133.912 C -125.62 142.781 -64.074 127.743 119.526 125.043 C 294.118 122.344 212.074 111.547 172.054 108.461 C 132.03 105.377 149.542 102.678 216.576 99.978 C 283.613 97.664 207.571 91.88 214.074 85.711 C 221.079 79.54 303.623 79.54 240.589 72.213 C 228.584 70.671 266.605 61.803 236.588 60.26 C 206.572 58.718 216.576 55.247 255.099 54.091 C 293.117 52.933 267.603 45.22 246.092 44.064 C 225.081 43.292 224.582 40.979 266.104 36.352 Z" fill="currentColor" />
                                     </g>
