@@ -76,7 +76,7 @@ export default function PortfolioPage() {
         return language === 'fr' ? (text.fr || text.en) : (text.en || '')
     }
 
-    const getLocalizedTitle = (project: Project) => getLocalizedText(project.title as string | BilingualField)
+    const getLocalizedTitle = (project: Project): string => getLocalizedText(project.title as string | BilingualField)
 
     const seedDefaultProjects = async () => {
         if (!confirm('This will replace existing projects with 5 default projects. Continue?')) return
@@ -287,7 +287,7 @@ export default function PortfolioPage() {
                                 <span className="absolute top-3 left-3 px-3 py-1 bg-deep-space-blue-600 text-white text-xs font-bold rounded-full">{project.scope}</span>
                             </div>
                             <div className="p-5">
-                                <h3 className="font-bold text-gray-900">{getLocalizedTitle(project)}</h3>
+                                <h3 className="font-bold text-gray-900">{String(getLocalizedTitle(project))}</h3>
                                 <p className="text-sm text-gray-500 mt-1">{project.location} - {project.year} - {project.area}m2</p>
                                 <div className="flex gap-2 mt-4">
                                     <button onClick={() => handleOpenModal(project)} className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200">
