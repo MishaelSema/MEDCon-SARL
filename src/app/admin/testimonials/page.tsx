@@ -24,7 +24,7 @@ export default function TestimonialsPage() {
 
     const fetchTestimonials = async () => {
         try {
-            const token = localStorage.getItem('adminToken')
+            const token = localStorage.getItem('admin-token')
             const res = await fetch('/api/testimonials', {
                 headers: { 'Authorization': `Bearer ${token}` }
             })
@@ -41,7 +41,7 @@ export default function TestimonialsPage() {
 
     const updateStatus = async (id: string, status: string) => {
         try {
-            const token = localStorage.getItem('adminToken')
+            const token = localStorage.getItem('admin-token')
             const res = await fetch('/api/admin/testimonials', {
                 method: 'PATCH',
                 headers: {
@@ -63,7 +63,7 @@ export default function TestimonialsPage() {
         if (!confirm('Are you sure you want to delete this testimonial?')) return
         
         try {
-            const token = localStorage.getItem('adminToken')
+            const token = localStorage.getItem('admin-token')
             const res = await fetch(`/api/admin/testimonials?id=${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }

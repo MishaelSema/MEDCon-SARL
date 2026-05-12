@@ -9,7 +9,7 @@ import { ArrowRight, Loader2 } from 'lucide-react'
 
 interface Project {
     _id: string
-    title: string
+    title: string | { en: string; fr: string }
     scope: string
     category: string
     image: string
@@ -17,7 +17,7 @@ interface Project {
     location: string
     year: string
     area?: string
-    description: string
+    description: string | { en: string; fr: string }
 }
 
 export default function PortfolioPage() {
@@ -42,6 +42,11 @@ export default function PortfolioPage() {
         } finally {
             setLoading(false)
         }
+    }
+
+    const getLocalizedText = (text: string | { en: string; fr: string }) => {
+        if (typeof text === 'string') return text
+        return language === 'fr' ? (text.fr || text.en) : (text.en || text)
     }
 
     const filters = [
@@ -135,7 +140,7 @@ export default function PortfolioPage() {
                                         <div className="relative h-72 overflow-hidden rounded-2xl shadow-lg">
                                             <Image
                                                 src={project.mainImage || project.image || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&h=600&fit=crop'}
-                                                alt={project.title}
+                                                alt={getLocalizedText(project.title)}
                                                 fill
                                                 className="object-cover transition-transform duration-500 group-hover:scale-110"
                                             />
@@ -151,7 +156,7 @@ export default function PortfolioPage() {
                                             </div>
                                         </div>
                                         <div className="pt-4">
-                                            <h3 className="text-xl font-bold text-gray-900">{project.title}</h3>
+                                            <h3 className="text-xl font-bold text-gray-900">{getLocalizedText(project.title)}</h3>
                                             <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
                                                 <span>{project.year}</span>
                                                 <span>{project.scope}</span>

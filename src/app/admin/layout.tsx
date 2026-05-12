@@ -46,7 +46,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
             try {
                 const [testimonialsRes, contactsRes] = await Promise.all([
-                    fetch('/api/testimonials'),
+                    fetch('/api/testimonials', { headers: { Authorization: `Bearer ${token}` } }),
                     fetch('/api/contact', { headers: { Authorization: `Bearer ${token}` } })
                 ])
 

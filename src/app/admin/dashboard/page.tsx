@@ -11,7 +11,7 @@ export default function AdminDashboard() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const token = localStorage.getItem('adminToken')
+            const token = localStorage.getItem('admin-token')
             if (!token) return
 
             try {

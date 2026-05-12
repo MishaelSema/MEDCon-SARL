@@ -56,7 +56,7 @@ export default function ServicesPage() {
         if (!confirm('This will replace existing services with 5 default services. Continue?')) return
         setSeeding(true)
         try {
-            const token = localStorage.getItem('adminToken')
+            const token = localStorage.getItem('admin-token')
             const res = await fetch('/api/admin/seed/services', {
                 method: 'POST',
                 headers: { Authorization: `Bearer ${token}` }
@@ -136,7 +136,7 @@ export default function ServicesPage() {
     const handleSave = async () => {
         setSaving(true)
         try {
-            const token = localStorage.getItem('adminToken')
+            const token = localStorage.getItem('admin-token')
             const res = await fetch('/api/admin/services', {
                 method: 'POST',
                 headers: {
@@ -165,7 +165,7 @@ export default function ServicesPage() {
         if (!confirm('Are you sure you want to delete this service?')) return
         
         try {
-            const token = localStorage.getItem('adminToken')
+            const token = localStorage.getItem('admin-token')
             const res = await fetch(`/api/admin/services?id=${id}`, {
                 method: 'DELETE',
                 headers: {

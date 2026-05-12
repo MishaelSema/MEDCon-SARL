@@ -37,7 +37,7 @@ export default function LeadsPage() {
 
     const fetchLeads = async () => {
         try {
-            const token = localStorage.getItem('adminToken')
+            const token = localStorage.getItem('admin-token')
             const res = await fetch('/api/leads', {
                 headers: { 'Authorization': `Bearer ${token}` }
             })

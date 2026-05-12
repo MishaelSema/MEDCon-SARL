@@ -13,7 +13,7 @@ export default function ContactsPage() {
     }, [])
 
     const fetchMessages = async () => {
-        const token = localStorage.getItem('adminToken')
+        const token = localStorage.getItem('admin-token')
         if (!token) return
 
         try {
@@ -28,7 +28,7 @@ export default function ContactsPage() {
     }
 
     const markAsRead = async (id: string) => {
-        const token = localStorage.getItem('adminToken')
+        const token = localStorage.getItem('admin-token')
         try {
             await fetch('/api/contact', {
                 method: 'PATCH',
@@ -42,7 +42,7 @@ export default function ContactsPage() {
     }
 
     const deleteMessage = async (id: string) => {
-        const token = localStorage.getItem('adminToken')
+        const token = localStorage.getItem('admin-token')
         if (!confirm('Delete this message?')) return
 
         try {

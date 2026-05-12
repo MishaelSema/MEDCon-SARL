@@ -4,6 +4,18 @@ import { contactNotificationEmail, thankYouEmail } from '@/lib/email-templates'
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'medconsarl@gmail.com'
 
+export async function GET(request: NextRequest) {
+    try {
+        const { getDatabase } = await import('@/lib/mongodb')
+        const db = await getDatabase()
+        const contacts = await db.collection('contacts').find({}).sort({ createdAt: -1 }).toArray()
+        return NextResponse.json(contacts)
+    } catch (error) {
+        console.error('Contact GET error:', error)
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    }
+}
+
 export async function POST(request: NextRequest) {
     try {
         const data = await request.json()
