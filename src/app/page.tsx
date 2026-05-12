@@ -616,8 +616,8 @@ export default function HomePage() {
                         </div>
                     ) : (
                         <div className="relative overflow-hidden">
-                            <div className={`flex gap-6 ${reviews.length >= 4 ? 'animate-marquee' : ''}`}>
-                                {[...reviews, ...reviews].map((review, index) => (
+                            <div className={`flex gap-6 ${reviews.length >= 4 ? 'animate-marquee' : 'flex-wrap justify-center'}`}>
+                                {(reviews.length >= 4 ? [...reviews, ...reviews] : reviews).map((review, index) => (
                                     <div key={`${review._id}-${index}`} className="flex-shrink-0 w-80 bg-white rounded-2xl p-6 border border-gray-100">
                                         <div className="flex items-center gap-1 mb-3">{renderStars(review.rating)}</div>
                                         <p className="text-gray-600 text-sm leading-relaxed mb-4 border-l-4 border-yellow-green-400 pl-3 italic">"{review.text || review.content}"</p>
