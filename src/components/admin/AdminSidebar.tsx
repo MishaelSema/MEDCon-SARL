@@ -5,11 +5,12 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { 
     LayoutDashboard, FolderOpen, Briefcase, MessageSquare, Star, 
-    LogOut, Menu, X, Clock
+    LogOut, Menu, X, Clock, Users
 } from 'lucide-react'
 
 const navItems = [
     { href: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+    { href: '/admin/leads', icon: Users, label: 'Leads & Guide' },
     { href: '/admin/portfolio', icon: FolderOpen, label: 'Portfolio' },
     { href: '/admin/services', icon: Briefcase, label: 'Services' },
     { href: '/admin/testimonials', icon: Star, label: 'Testimonials' },

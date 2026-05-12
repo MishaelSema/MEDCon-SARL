@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { 
     ArrowRight, Building2, Home, Wrench, DollarSign, Palette,
-    MapPin, FileText, Lightbulb, Phone, Star, ShieldCheck, X, Loader2
+    MapPin, FileText, Lightbulb, Phone, Star, ShieldCheck, X, Loader2, CheckCircle
 } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
 import { useForm } from 'react-hook-form'
@@ -25,17 +25,36 @@ interface Testimonial {
     text: string
 }
 
+interface GuideSettings {
+    title: string
+    description: string
+    downloadUrl: string
+    enabled: boolean
+}
+
 export default function HomePage() {
-    const { t } = useLanguage()
+    const { t, language } = useLanguage()
     const [showTestimonialModal, setShowTestimonialModal] = useState(false)
     const [rating, setRating] = useState(5)
     const [featuredProjects, setFeaturedProjects] = useState<Project[]>([])
     const [reviews, setReviews] = useState<Testimonial[]>([])
     const [loading, setLoading] = useState(true)
+    const [guide, setGuide] = useState<GuideSettings>({
+        title: 'Get the Construction Guide for Free',
+        description: 'Discover everything you need to know before starting your construction project.',
+        downloadUrl: '',
+        enabled: true,
+    })
+    const [guideSubmitted, setGuideSubmitted] = useState(false)
+    const { register: registerGuide, handleSubmit: handleGuideSubmit, formState: { errors: guideErrors }, reset: resetGuide } = useForm()
     const { register, handleSubmit, reset, formState: { errors } } = useForm()
 
     useEffect(() => {
         fetchData()
+        const savedGuide = localStorage.getItem('guideSettings')
+        if (savedGuide) {
+            setGuide(JSON.parse(savedGuide))
+        }
     }, [])
 
     const fetchData = async () => {
@@ -68,6 +87,13 @@ export default function HomePage() {
         { icon: Home, value: '15+', label: t('home.team') },
     ]
 
+    const guideBenefits = [
+        language === 'en' ? 'Explore the pros and cons of different construction approaches.' : 'Explorez les avantages et inconvénients des différentes approches de construction.',
+        language === 'en' ? 'Reflect on essential questions before you start.' : 'Réfléchissez aux questions essentielles avant de commencer.',
+        language === 'en' ? 'Get inspired with stunning design ideas.' : 'Inspirez-vous d\'idées de design époustouflantes.',
+        language === 'en' ? 'Learn about budgeting and cost management.' : 'Apprenez-en plus sur le budget et la gestion des coûts.',
+    ]
+
     const services = [
         { key: 'construction', icon: Building2, span: 'md:col-span-4' },
         { key: 'renovation', icon: Wrench, span: 'md:col-span-4' },
@@ -89,6 +115,29 @@ export default function HomePage() {
             ))}
         </div>
     )
+
+    const onGuideSubmit = async (data: any) => {
+        try {
+            const res = await fetch('/api/leads', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            })
+            
+            if (res.ok) {
+                setGuideSubmitted(true)
+                resetGuide()
+                
+                if (guide.downloadUrl) {
+                    setTimeout(() => {
+                        window.open(guide.downloadUrl, '_blank')
+                    }, 1000)
+                }
+            }
+        } catch (err) {
+            alert('Something went wrong. Please try again.')
+        }
+    }
 
     const onTestimonialSubmit = async (data: any) => {
         try {
@@ -148,6 +197,101 @@ export default function HomePage() {
                     </motion.div>
                 </div>
             </section>
+
+            {guide.enabled && (
+                <section className="py-16 bg-deep-space-blue-600 relative overflow-hidden">
+                    <div className="absolute inset-0 opacity-10">
+                        <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+                        <div className="absolute bottom-0 right-0 w-96 h-96 bg-yellow-green-400 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
+                    </div>
+                    
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                            <div className="text-white">
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                >
+                                    <h2 className="text-3xl md:text-4xl font-bold mb-4">{guide.title}</h2>
+                                    <p className="text-lg text-white/80 mb-6">{guide.description}</p>
+                                    <ul className="space-y-3">
+                                        {guideBenefits.map((benefit, i) => (
+                                            <li key={i} className="flex items-start gap-3">
+                                                <CheckCircle className="w-5 h-5 text-yellow-green-400 flex-shrink-0 mt-0.5" />
+                                                <span className="text-white/90">{benefit}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </motion.div>
+                            </div>
+                            
+                            <motion.div
+                                initial={{ opacity: 0, x: 20 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true }}
+                                className="bg-white rounded-3xl p-8 shadow-2xl"
+                            >
+                                {guideSubmitted ? (
+                                    <div className="text-center py-8">
+                                        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <CheckCircle className="w-8 h-8 text-green-600" />
+                                        </div>
+                                        <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                                            {language === 'en' ? 'Check Your Email!' : 'Vérifiez Votre Email!'}
+                                        </h3>
+                                        <p className="text-gray-600 mb-4">
+                                            {language === 'en' 
+                                                ? 'Your guide is on its way! If the download didn\'t start automatically, click below.'
+                                                : 'Votre guide est en route! Si le téléchargement n\'a pas commencé automatiquement, cliquez ci-dessous.'}
+                                        </p>
+                                        {guide.downloadUrl && (
+                                            <a href={guide.downloadUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 bg-deep-space-blue-600 text-white font-bold rounded-full hover:bg-deep-space-blue-700">
+                                                <FileText className="w-4 h-4" /> 
+                                                {language === 'en' ? 'Download Guide' : 'Télécharger le Guide'}
+                                            </a>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <form onSubmit={handleGuideSubmit(onGuideSubmit)} className="space-y-4">
+                                        <h3 className="text-xl font-bold text-gray-900 mb-2">
+                                            {language === 'en' ? 'Get Free Guide Now' : 'Obtenez le Guide Gratuit'}
+                                        </h3>
+                                        <div>
+                                            <input
+                                                {...registerGuide('name', { required: true })}
+                                                type="text"
+                                                placeholder={language === 'en' ? 'Enter your name' : 'Entrez votre nom'}
+                                                className="w-full p-4 rounded-xl bg-gray-50 border-2 border-gray-200 focus:border-deep-space-blue-500 focus:outline-none"
+                                            />
+                                        </div>
+                                        <div>
+                                            <input
+                                                {...registerGuide('email', { required: true })}
+                                                type="email"
+                                                placeholder={language === 'en' ? 'Enter your email' : 'Entrez votre email'}
+                                                className="w-full p-4 rounded-xl bg-gray-50 border-2 border-gray-200 focus:border-deep-space-blue-500 focus:outline-none"
+                                            />
+                                        </div>
+                                        <button
+                                            type="submit"
+                                            className="w-full py-4 bg-yellow-green-500 text-deep-space-blue-900 font-bold rounded-xl hover:bg-yellow-green-400 transition-colors flex items-center justify-center gap-2"
+                                        >
+                                            {language === 'en' ? 'Get Free Guide Now' : 'Obtenez le Guide Gratuit'}
+                                            <ArrowRight className="w-4 h-4" />
+                                        </button>
+                                        <p className="text-xs text-gray-500 text-center">
+                                            {language === 'en' 
+                                                ? 'We respect your privacy. Unsubscribe at any time.'
+                                                : 'Nous respectons votre vie privée. Désabonnez-vous à tout moment.'}
+                                        </p>
+                                    </form>
+                                )}
+                            </motion.div>
+                        </div>
+                    </div>
+                </section>
+            )}
 
             <section className="py-16 bg-deep-space-blue-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -351,7 +495,7 @@ export default function HomePage() {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
                     <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-3xl p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto">
                         <div className="flex items-center justify-between mb-6">
-                            <h3 className="text-2xl font-bold text-gray-900">Leave a Testimonial</h3>
+                            <h3 className="text-2xl font-bold text-gray-900"> Leave a Testimonial</h3>
                             <button onClick={() => setShowTestimonialModal(false)} className="p-2 hover:bg-gray-100 rounded-full"><X className="w-5 h-5" /></button>
                         </div>
                         <form onSubmit={handleSubmit(onTestimonialSubmit)} className="space-y-4">
