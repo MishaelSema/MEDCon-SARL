@@ -8,7 +8,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const router = useRouter()
     const pathname = usePathname()
     const [loading, setLoading] = useState(true)
-    const [stats, setStats] = useState({ pendingTestimonials: 2, messages: 3 })
+    const [stats, setStats] = useState({ pendingTestimonials: 0, messages: 0 })
 
     useEffect(() => {
         if (pathname === '/admin/login') {
@@ -36,6 +36,41 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         setLoading(false)
     }, [pathname, router])
+
+    useEffect(() => {
+        if (loading || pathname === '/admin/login') return
+
+        const fetchStats = async () => {
+            const token = localStorage.getItem('admin-token')
+            if (!token) return
+
+            try {
+                const [testimonialsRes, contactsRes] = await Promise.all([
+                    fetch('/api/testimonials'),
+                    fetch('/api/contact', { headers: { Authorization: `Bearer ${token}` } })
+                ])
+
+                const testimonials = await testimonialsRes.json()
+                const contacts = contactsRes.ok ? await contactsRes.json() : []
+
+                const pending = Array.isArray(testimonials) 
+                    ? testimonials.filter((t: any) => t.status === 'pending').length 
+                    : 0
+
+                const unread = Array.isArray(contacts) 
+                    ? contacts.filter((c: any) => !c.read).length 
+                    : 0
+
+                setStats({ pendingTestimonials: pending, messages: unread })
+            } catch (error) {
+                console.error('Error fetching sidebar stats:', error)
+            }
+        }
+
+        fetchStats()
+        const interval = setInterval(fetchStats, 30000)
+        return () => clearInterval(interval)
+    }, [loading, pathname])
 
     if (loading || pathname === '/admin/login') {
         return <>{children}</>
