@@ -1,5 +1,40 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+export async function POST(request: NextRequest) {
+    try {
+        const authHeader = request.headers.get('authorization')
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+
+        const data = await request.json()
+        const { name, email, rating, text, status } = data
+
+        if (!name || !email || !text) {
+            return NextResponse.json({ error: 'Name, email, and text are required' }, { status: 400 })
+        }
+
+        const { getDatabase } = await import('@/lib/mongodb')
+        const db = await getDatabase()
+        
+        const testimonial = {
+            name,
+            email,
+            rating: rating || 5,
+            content: text,
+            text: text,
+            status: status || 'approved',
+            createdAt: new Date(),
+        }
+
+        const result = await db.collection('testimonials').insertOne(testimonial)
+        return NextResponse.json({ success: true, insertedId: result.insertedId })
+    } catch (error) {
+        console.error('Testimonials POST error:', error)
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    }
+}
+
 export async function PATCH(request: NextRequest) {
     try {
         const authHeader = request.headers.get('authorization')

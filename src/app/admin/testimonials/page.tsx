@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Check, X, Star, Loader2 } from 'lucide-react'
+import { Check, X, Star, Loader2, Plus, Pencil, Trash2, X as XIcon } from 'lucide-react'
 
 interface Testimonial {
     _id: string
@@ -17,6 +17,10 @@ interface Testimonial {
 export default function TestimonialsPage() {
     const [testimonials, setTestimonials] = useState<Testimonial[]>([])
     const [loading, setLoading] = useState(true)
+    const [showModal, setShowModal] = useState(false)
+    const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null)
+    const [formData, setFormData] = useState({ name: '', email: '', rating: 5, text: '' })
+    const [saving, setSaving] = useState(false)
 
     useEffect(() => {
         fetchTestimonials()
@@ -77,6 +81,40 @@ export default function TestimonialsPage() {
         }
     }
 
+    const handleOpenModal = (testimonial: Testimonial | null = null) => {
+        if (testimonial) {
+            setFormData({ name: testimonial.name, email: testimonial.email, rating: testimonial.rating, text: testimonial.content || testimonial.text || '' })
+        } else {
+            setFormData({ name: '', email: '', rating: 5, text: '' })
+        }
+        setEditingTestimonial(testimonial)
+        setShowModal(true)
+    }
+
+    const handleSave = async () => {
+        if (!formData.name || !formData.email || !formData.text) return
+        
+        setSaving(true)
+        try {
+            const token = localStorage.getItem('admin-token')
+            const res = await fetch('/api/admin/testimonials', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ ...formData, status: 'approved' })
+            })
+            
+            if (res.ok) {
+                await fetchTestimonials()
+                setShowModal(false)
+                setEditingTestimonial(null)
+            }
+        } catch (error) {
+            console.error('Error saving testimonial:', error)
+        } finally {
+            setSaving(false)
+        }
+    }
+
     const renderStars = (rating: number) => (
         <div className="flex gap-0.5">
             {[1, 2, 3, 4, 5].map((i) => (
@@ -98,10 +136,15 @@ export default function TestimonialsPage() {
 
     return (
         <div>
-            <div className="mb-6 flex items-center gap-4">
-                <h1 className="text-2xl font-bold text-gray-900">Testimonials</h1>
-                <span className="px-3 py-1 bg-yellow-green-100 text-yellow-green-700 text-sm font-bold rounded-full">{pending.length} Pending</span>
-                <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-bold rounded-full">{approved.length} Approved</span>
+            <div className="mb-6 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                    <h1 className="text-2xl font-bold text-gray-900">Testimonials</h1>
+                    <span className="px-3 py-1 bg-yellow-green-100 text-yellow-green-700 text-sm font-bold rounded-full">{pending.length} Pending</span>
+                    <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-bold rounded-full">{approved.length} Approved</span>
+                </div>
+                <button onClick={() => handleOpenModal(null)} className="flex items-center gap-2 px-4 py-2 bg-deep-space-blue-600 text-white font-bold rounded-xl hover:bg-deep-space-blue-700">
+                    <Plus className="w-4 h-4" /> Add Testimonial
+                </button>
             </div>
 
             {pending.length > 0 && (
@@ -179,11 +222,49 @@ export default function TestimonialsPage() {
                                         )}
                                     </div>
                                 </div>
+</div>
+            )}
+
+            {showModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+                    <div className="bg-white rounded-3xl w-full max-w-md">
+                        <div className="flex items-center justify-between p-6 border-b">
+                            <h2 className="text-xl font-bold text-gray-900">{editingTestimonial ? 'Edit Testimonial' : 'Add Testimonial'}</h2>
+                            <button onClick={() => setShowModal(false)} className="p-2 hover:bg-gray-100 rounded-full"><XIcon className="w-5 h-5" /></button>
+                        </div>
+                        <div className="p-6 space-y-4">
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-2">Client Name</label>
+                                <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="w-full p-3 rounded-xl bg-gray-50 border-2 border-gray-200 focus:border-deep-space-blue-500 focus:outline-none" placeholder="John Doe" />
                             </div>
-                        ))}
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-2">Email</label>
+                                <input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="w-full p-3 rounded-xl bg-gray-50 border-2 border-gray-200 focus:border-deep-space-blue-500 focus:outline-none" placeholder="john@example.com" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-2">Rating</label>
+                                <div className="flex gap-2">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <button key={star} type="button" onClick={() => setFormData({ ...formData, rating: star })} className="p-1">
+                                            <Star className={`w-8 h-8 ${star <= formData.rating ? 'text-yellow-green-500 fill-yellow-green-500' : 'text-gray-300'}`} />
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-2">Testimonial Text</label>
+                                <textarea value={formData.text} onChange={(e) => setFormData({ ...formData, text: e.target.value })} rows={4} className="w-full p-3 rounded-xl bg-gray-50 border-2 border-gray-200 focus:border-deep-space-blue-500 focus:outline-none resize-none" placeholder="What the client said..."></textarea>
+                            </div>
+                        </div>
+                        <div className="p-6 border-t flex justify-end gap-3">
+                            <button onClick={() => setShowModal(false)} className="px-6 py-3 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200">Cancel</button>
+                            <button onClick={handleSave} disabled={saving || !formData.name || !formData.email || !formData.text} className="px-6 py-3 bg-deep-space-blue-600 text-white font-bold rounded-xl hover:bg-deep-space-blue-700 disabled:opacity-50">
+                                {saving ? 'Saving...' : 'Save Testimonial'}
+                            </button>
+                        </div>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     )
 }
