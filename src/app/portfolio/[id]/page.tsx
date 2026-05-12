@@ -49,7 +49,7 @@ export default function PortfolioDetailPage({ params }: { params: { id: string }
     const [loading, setLoading] = useState(true)
     const [lightboxOpen, setLightboxOpen] = useState(false)
     const [lightboxIndex, setLightboxIndex] = useState(0)
-    const allImages = [mainImage, ...galleryImages]
+    const [allImages, setAllImages] = useState<string[]>([])
 
     useEffect(() => {
         const fetchData = async () => {
@@ -63,6 +63,12 @@ export default function PortfolioDetailPage({ params }: { params: { id: string }
                     const projects = await projectsRes.json()
                     const found = projects.find((p: Project) => p._id === id)
                     setProject(found || null)
+                    
+                    if (found) {
+                        const mi = found.mainImage || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&h=800&fit=crop'
+                        const gi = found.images?.length > 0 ? found.images : []
+                        setAllImages([mi, ...gi])
+                    }
                     
                     if (found?.serviceIds?.length && servicesRes.ok) {
                         const allServices = await servicesRes.json()
