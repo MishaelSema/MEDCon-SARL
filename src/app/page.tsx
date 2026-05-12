@@ -168,7 +168,7 @@ export default function HomePage() {
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
                     <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
                         <span className="text-yellow-green-400 font-bold tracking-[0.3em] uppercase text-sm mb-6 block">{t('hero.tagline')}</span>
-                        <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8 pt-16 sm:pt-24">
+                        <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8">
                             {t('hero.title')}<br />
                             <span className="relative inline-block mt-2">
                                 <span className="relative z-10 text-gray-900">{t('hero.titleAccent')}</span>

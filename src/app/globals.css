@@ -12,6 +12,10 @@
   }
 }
 
+body:not(.home-page) {
+  padding-top: 60px;
+}
+
 @layer utilities {
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-deep-space-blue-500 to-yellow-green-500;
