@@ -69,16 +69,39 @@ export async function PATCH(request: NextRequest) {
 
     try {
         const data = await request.json()
-        const { id, read } = data
+        const { id, read, reply, repliedAt } = data
         
         const { ObjectId } = await import('mongodb')
         const { getDatabase } = await import('@/lib/mongodb')
         const db = await getDatabase()
         
+        const updateData: any = { updatedAt: new Date() }
+        if (read !== undefined) updateData.read = read
+        if (reply !== undefined) updateData.reply = reply
+        if (repliedAt !== undefined) updateData.repliedAt = repliedAt
+        
         await db.collection('contacts').updateOne(
             { _id: new ObjectId(id) },
-            { $set: { read, updatedAt: new Date() } }
+            { $set: updateData }
         )
+        
+        if (reply) {
+            const contact = await db.collection('contacts').findOne({ _id: new ObjectId(id) })
+            if (contact) {
+                await sendEmail({
+                    to: contact.email,
+                    subject: `Re: Your inquiry to MEDCon SARL`,
+                    html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                        <h2 style="color: #073856;">MEDCon SARL - Reply to your inquiry</h2>
+                        <p>Dear ${contact.name},</p>
+                        <div style="background: #f9f9f9; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                            <p style="white-space: pre-wrap;">${reply}</p>
+                        </div>
+                        <p>Best regards,<br/><strong>MEDCon SARL</strong><br/>Yaoundé, Cameroon<br/>+237 671 911 489</p>
+                    </div>`,
+                })
+            }
+        }
         
         return NextResponse.json({ success: true })
     } catch (error) {
