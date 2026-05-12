@@ -25,6 +25,7 @@ interface Testimonial {
     name: string
     rating: number
     text: string
+    content?: string
 }
 
 interface Service {
