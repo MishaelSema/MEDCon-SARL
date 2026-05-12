@@ -134,7 +134,7 @@ export default function PortfolioPage() {
                                         : 'bg-white text-gray-700 hover:bg-deep-space-blue-50'
                                 }`}
                             >
-                                {getServiceTitle(service)}
+                                {String(getServiceTitle(service))}
                             </button>
                         ))}
                     </div>
@@ -172,7 +172,7 @@ export default function PortfolioPage() {
                                             <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-full group-hover:translate-y-0 transition-transform">
                                                 <span className="inline-block px-3 py-1 bg-yellow-green-500 text-deep-space-blue-600 text-sm font-bold rounded-full mb-2">
                                                     {p.serviceIds?.length 
-                                                        ? getServiceTitle(services.find(s => s._id === p.serviceIds?.[0]) || { _id: '', title: p.scope } as Service)
+                                                        ? String(getServiceTitle(services.find(s => s._id === p.serviceIds?.[0]) || { _id: '', title: p.scope } as Service))
                                                         : p.scope}
                                                 </span>
                                                 <div className="flex items-center justify-between">
