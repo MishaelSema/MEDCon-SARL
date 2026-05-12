@@ -28,30 +28,51 @@ interface Project {
     features: string[] | FeaturesBilingual
     images: string[]
     mainImage: string
+    serviceIds?: string[]
+}
+
+interface Service {
+    _id: string
+    title: string | BilingualField
+    description: string | BilingualField
+    features: string[]
+    images: string[]
+    icon?: string
 }
 
 export default function PortfolioDetailPage({ params }: { params: { id: string } }) {
     const { id } = params
     const { t, language } = useLanguage()
     const [project, setProject] = useState<Project | null>(null)
+    const [relatedServices, setRelatedServices] = useState<Service[]>([])
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        const fetchProject = async () => {
+        const fetchData = async () => {
             try {
-                const res = await fetch('/api/admin/projects')
-                if (res.ok) {
-                    const projects = await res.json()
+                const [projectsRes, servicesRes] = await Promise.all([
+                    fetch('/api/admin/projects'),
+                    fetch('/api/admin/services')
+                ])
+                
+                if (projectsRes.ok) {
+                    const projects = await projectsRes.json()
                     const found = projects.find((p: Project) => p._id === id)
                     setProject(found || null)
+                    
+                    if (found?.serviceIds?.length && servicesRes.ok) {
+                        const allServices = await servicesRes.json()
+                        const related = allServices.filter((s: Service) => found.serviceIds?.includes(s._id))
+                        setRelatedServices(related)
+                    }
                 }
             } catch (error) {
-                console.error('Error fetching project:', error)
+                console.error('Error fetching data:', error)
             } finally {
                 setLoading(false)
             }
         }
-        fetchProject()
+        fetchData()
     }, [id])
 
     const getLocalizedText = (text: string | BilingualField): string => {
@@ -189,6 +210,31 @@ export default function PortfolioDetailPage({ params }: { params: { id: string }
                                                 />
                                             </div>
                                         ))}
+                                    </div>
+                                )}
+
+                                {relatedServices.length > 0 && (
+                                    <div className="mt-12">
+                                        <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                                            {language === 'en' ? 'Related Services' : 'Services Associés'}
+                                        </h2>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            {relatedServices.map((service) => {
+                                                const serviceTitle = typeof service.title === 'string' ? service.title : service.title.en
+                                                const serviceImage = service.images?.[0] || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop'
+                                                return (
+                                                    <Link key={service._id} href={`/services?service=${service._id}`} className="group block bg-cornsilk-50 rounded-2xl overflow-hidden hover:shadow-lg transition-all">
+                                                        <div className="relative h-32">
+                                                            <Image src={serviceImage} alt={serviceTitle} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                                                        </div>
+                                                        <div className="p-4">
+                                                            <h3 className="font-bold text-gray-900">{serviceTitle}</h3>
+                                                            <p className="text-xs text-gray-500 mt-1">{language === 'en' ? 'View Service' : 'Voir Service'} →</p>
+                                                        </div>
+                                                    </Link>
+                                                )
+                                            })}
+                                        </div>
                                     </div>
                                 )}
                             </motion.div>

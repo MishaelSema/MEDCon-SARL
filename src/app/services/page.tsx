@@ -10,11 +10,19 @@ import { useLanguage } from '@/context/LanguageContext'
 
 interface Service {
     _id: string
-    title: string
-    description: string
+    title: string | { en: string; fr: string }
+    description: string | { en: string; fr: string }
     features: string[]
     images: string[]
     icon?: string
+    projectIds?: string[]
+}
+
+interface Project {
+    _id: string
+    title: string | { en: string; fr: string }
+    mainImage: string
+    location: string
 }
 
 function ServicesContent() {
@@ -22,21 +30,27 @@ function ServicesContent() {
     const searchParams = useSearchParams()
     const [activeIndex, setActiveIndex] = useState(0)
     const [services, setServices] = useState<Service[]>([])
+    const [projects, setProjects] = useState<Project[]>([])
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        fetchServices()
+        fetchData()
     }, [])
 
-    const fetchServices = async () => {
+    const fetchData = async () => {
         try {
-            const res = await fetch('/api/admin/services')
-            if (res.ok) {
-                const data = await res.json()
-                setServices(data)
+            const [servicesRes, projectsRes] = await Promise.all([
+                fetch('/api/admin/services'),
+                fetch('/api/admin/projects')
+            ])
+            if (servicesRes.ok) {
+                setServices(await servicesRes.json())
+            }
+            if (projectsRes.ok) {
+                setProjects(await projectsRes.json())
             }
         } catch (error) {
-            console.error('Error fetching services:', error)
+            console.error('Error fetching data:', error)
         } finally {
             setLoading(false)
         }
@@ -207,6 +221,30 @@ function ServicesContent() {
                                             </div>
                                         ))}
                                     </div>
+
+                                    {activeService.projectIds && activeService.projectIds.length > 0 && (
+                                        <div className="mb-8">
+                                            <h3 className="text-lg font-bold text-gray-900 mb-4">
+                                                {language === 'en' ? 'Related Projects' : 'Projets Associés'}
+                                            </h3>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                {projects.filter(p => activeService.projectIds?.includes(p._id)).map((project) => {
+                                                    const projectTitle = typeof project.title === 'string' ? project.title : project.title.en
+                                                    return (
+                                                        <Link key={project._id} href={`/portfolio/${project._id}`} className="group block bg-deep-space-blue-50 rounded-xl overflow-hidden hover:shadow-lg transition-all">
+                                                            <div className="relative h-24">
+                                                                <Image src={project.mainImage || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=200&fit=crop'} alt={projectTitle} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                                                            </div>
+                                                            <div className="p-3">
+                                                                <h4 className="font-bold text-gray-900 text-sm">{projectTitle}</h4>
+                                                                <p className="text-xs text-gray-500">{project.location}</p>
+                                                            </div>
+                                                        </Link>
+                                                    )
+                                                })}
+                                            </div>
+                                        </div>
+                                    )}
 
                                     <Link
                                         href="/contact"

@@ -14,11 +14,18 @@ interface Service {
     images: string[]
     showOnHome: boolean
     order: number
+    projectIds?: string[]
+}
+
+interface ProjectOption {
+    _id: string
+    title: string | { en: string; fr: string }
 }
 
 export default function ServicesPage() {
     const { language } = useLanguage()
     const [services, setServices] = useState<Service[]>([])
+    const [projects, setProjects] = useState<ProjectOption[]>([])
     const [loading, setLoading] = useState(true)
     const [showModal, setShowModal] = useState(false)
     const [editingService, setEditingService] = useState<Service | null>(null)
@@ -31,12 +38,26 @@ export default function ServicesPage() {
         images: [],
         showOnHome: true,
         order: 1,
+        projectIds: [],
     })
     const [newFeature, setNewFeature] = useState('')
 
     useEffect(() => {
         fetchServices()
+        fetchProjects()
     }, [])
+
+    const fetchProjects = async () => {
+        try {
+            const res = await fetch('/api/admin/projects')
+            if (res.ok) {
+                const data = await res.json()
+                setProjects(data)
+            }
+        } catch (error) {
+            console.error('Error fetching projects:', error)
+        }
+    }
 
     const fetchServices = async () => {
         try {
@@ -93,6 +114,7 @@ export default function ServicesPage() {
                 images: service.images || [],
                 showOnHome: service.showOnHome ?? true,
                 order: service.order || 1,
+                projectIds: service.projectIds || [],
             })
         } else {
             setFormData({
@@ -102,6 +124,7 @@ export default function ServicesPage() {
                 images: [],
                 showOnHome: true,
                 order: services.length + 1,
+                projectIds: [],
             })
         }
         setEditingService(service)
@@ -350,6 +373,34 @@ export default function ServicesPage() {
                                     </button>
                                 </div>
                                 <p className="text-xs text-gray-400 mt-2">Upload multiple images. First image will be the main image.</p>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-2">Related Projects (Optional)</label>
+                                <p className="text-xs text-gray-500 mb-3">Link this service to related projects</p>
+                                <div className="space-y-2 max-h-48 overflow-y-auto border-2 border-gray-200 rounded-xl p-3">
+                                    {projects.length === 0 ? (
+                                        <p className="text-sm text-gray-500">No projects available. Create projects first.</p>
+                                    ) : (
+                                        projects.map((project) => (
+                                            <label key={project._id} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer">
+                                                <input 
+                                                    type="checkbox"
+                                                    checked={formData.projectIds?.includes(project._id) || false}
+                                                    onChange={(e) => {
+                                                        const current = formData.projectIds || []
+                                                        if (e.target.checked) {
+                                                            setFormData({ ...formData, projectIds: [...current, project._id] })
+                                                        } else {
+                                                            setFormData({ ...formData, projectIds: current.filter(id => id !== project._id) })
+                                                        }
+                                                    }}
+                                                    className="w-4 h-4 rounded border-gray-300 text-deep-space-blue-600 focus:ring-deep-space-blue-500"
+                                                />
+                                                <span className="text-sm text-gray-700">{typeof project.title === 'string' ? project.title : project.title.en}</span>
+                                            </label>
+                                        ))
+                                    )}
+                                </div>
                             </div>
                         </div>
                         <div className="p-6 border-t flex justify-end gap-3">

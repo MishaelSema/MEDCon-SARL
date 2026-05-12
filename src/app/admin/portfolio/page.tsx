@@ -28,11 +28,18 @@ interface Project {
     images: string[]
     mainImage: string
     status: string
+    serviceIds?: string[]
+}
+
+interface ServiceOption {
+    _id: string
+    title: string | BilingualField
 }
 
 export default function PortfolioPage() {
     const { language } = useLanguage()
     const [projects, setProjects] = useState<Project[]>([])
+    const [services, setServices] = useState<ServiceOption[]>([])
     const [loading, setLoading] = useState(true)
     const [showModal, setShowModal] = useState(false)
     const [editingProject, setEditingProject] = useState<Project | null>(null)
@@ -49,13 +56,27 @@ export default function PortfolioPage() {
         images: [],
         mainImage: '',
         status: 'active',
+        serviceIds: [],
     })
     const [newFeatureEn, setNewFeatureEn] = useState('')
     const [newFeatureFr, setNewFeatureFr] = useState('')
 
     useEffect(() => {
         fetchProjects()
+        fetchServices()
     }, [])
+
+    const fetchServices = async () => {
+        try {
+            const res = await fetch('/api/admin/services')
+            if (res.ok) {
+                const data = await res.json()
+                setServices(data)
+            }
+        } catch (error) {
+            console.error('Error fetching services:', error)
+        }
+    }
 
     const fetchProjects = async () => {
         try {
@@ -118,6 +139,7 @@ export default function PortfolioPage() {
                 images: project.images || [],
                 mainImage: project.mainImage || '',
                 status: project.status || 'active',
+                serviceIds: project.serviceIds || [],
             })
         } else {
             setFormData({
@@ -131,6 +153,7 @@ export default function PortfolioPage() {
                 images: [],
                 mainImage: '',
                 status: 'active',
+                serviceIds: [],
             })
         }
         setEditingProject(project)
@@ -430,6 +453,34 @@ export default function PortfolioPage() {
                                     <button type="button" onClick={addImage} className="flex items-center justify-center gap-2 w-full p-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:border-deep-space-blue-500 hover:text-deep-space-blue-600">
                                         <ImagePlus className="w-4 h-4" /> Add Image
                                     </button>
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-2">Related Services (Optional)</label>
+                                <p className="text-xs text-gray-500 mb-3">Link this project to related services</p>
+                                <div className="space-y-2 max-h-48 overflow-y-auto border-2 border-gray-200 rounded-xl p-3">
+                                    {services.length === 0 ? (
+                                        <p className="text-sm text-gray-500">No services available. Create services first.</p>
+                                    ) : (
+                                        services.map((service) => (
+                                            <label key={service._id} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer">
+                                                <input 
+                                                    type="checkbox"
+                                                    checked={formData.serviceIds?.includes(service._id) || false}
+                                                    onChange={(e) => {
+                                                        const current = formData.serviceIds || []
+                                                        if (e.target.checked) {
+                                                            setFormData({ ...formData, serviceIds: [...current, service._id] })
+                                                        } else {
+                                                            setFormData({ ...formData, serviceIds: current.filter(id => id !== service._id) })
+                                                        }
+                                                    }}
+                                                    className="w-4 h-4 rounded border-gray-300 text-deep-space-blue-600 focus:ring-deep-space-blue-500"
+                                                />
+                                                <span className="text-sm text-gray-700">{getLocalizedText(service.title as string | BilingualField)}</span>
+                                            </label>
+                                        ))
+                                    )}
                                 </div>
                             </div>
                         </div>
