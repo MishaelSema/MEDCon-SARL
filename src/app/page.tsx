@@ -378,33 +378,104 @@ export default function HomePage() {
                 </div>
             </section>
 
-            <section className="py-20 bg-deep-space-blue-600 text-white">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-12">
-                        <span className="text-yellow-green-400 font-bold tracking-widest uppercase text-xs">Why Choose Us</span>
-                        <h2 className="text-3xl md:text-4xl font-bold mt-3">The MEDCon Advantage</h2>
+            <section className="py-24 bg-white relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-full">
+                    <div className="absolute top-20 left-10 w-72 h-72 bg-yellow-green-500/5 rounded-full blur-3xl"></div>
+                    <div className="absolute bottom-20 right-10 w-96 h-96 bg-deep-space-blue-600/5 rounded-full blur-3xl"></div>
+                </div>
+                
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div className="text-center mb-16">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                        >
+                            <span className="text-yellow-green-500 font-bold tracking-widest uppercase text-xs">What Guides Us</span>
+                            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mt-3 mb-4">Our Values</h2>
+                            <div className="w-24 h-1 bg-yellow-green-500 mx-auto"></div>
+                        </motion.div>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="text-center">
-                            <div className="w-16 h-16 bg-yellow-green-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                <Award className="w-8 h-8 text-deep-space-blue-900" />
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <motion.div 
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.1 }}
+                            className="group relative bg-white rounded-3xl p-8 border-2 border-gray-100 hover:border-yellow-green-500 transition-all duration-500 hover:shadow-2xl hover:shadow-yellow-green-500/20"
+                        >
+                            <div className="absolute -top-6 left-8">
+                                <div className="w-12 h-12 bg-yellow-green-500 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
+                                    <ShieldCheck className="w-6 h-6 text-deep-space-blue-900" />
+                                </div>
                             </div>
-                            <h3 className="text-xl font-bold mb-2">{language === 'en' ? '5+ Years Experience' : '5+ Années d\'Expérience'}</h3>
-                            <p className="text-white/70">{language === 'en' ? 'Trusted expertise in construction across Cameroon with hundreds of successful projects completed.' : 'Expertise fiable dans la construction à travers le Cameroun avec des centaines de projets réussis.'}</p>
+                            <div className="pt-6">
+                                <span className="text-6xl font-bold text-gray-100 group-hover:text-yellow-green-500/20 transition-colors">01</span>
+                                <h3 className="text-xl font-bold text-gray-900 mt-2 mb-3">Quality First</h3>
+                                <p className="text-gray-500 leading-relaxed">We never compromise on materials or craftsmanship. Every detail matters in building your dream.</p>
+                                <div className="mt-6 h-1 w-0 group-hover:w-full bg-gradient-to-r from-yellow-green-500 to-transparent transition-all duration-500 rounded-full"></div>
+                            </div>
                         </motion.div>
-                        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="text-center">
-                            <div className="w-16 h-16 bg-yellow-green-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                <Users className="w-8 h-8 text-deep-space-blue-900" />
+
+                        <motion.div 
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.2 }}
+                            className="group relative bg-white rounded-3xl p-8 border-2 border-gray-100 hover:border-deep-space-blue-600 transition-all duration-500 hover:shadow-2xl hover:shadow-deep-space-blue-600/20"
+                        >
+                            <div className="absolute -top-6 left-8">
+                                <div className="w-12 h-12 bg-deep-space-blue-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
+                                    <Lightbulb className="w-6 h-6 text-white" />
+                                </div>
                             </div>
-                            <h3 className="text-xl font-bold mb-2">{language === 'en' ? 'Expert Team' : 'Équipe Experte'}</h3>
-                            <p className="text-white/70">{language === 'en' ? '15+ skilled professionals ready to bring your vision to life with quality craftsmanship.' : '15+ professionnels qualifiés prêts à donner vie à votre vision avec un artisanat de qualité.'}</p>
+                            <div className="pt-6">
+                                <span className="text-6xl font-bold text-gray-100 group-hover:text-deep-space-blue-600/20 transition-colors">02</span>
+                                <h3 className="text-xl font-bold text-gray-900 mt-2 mb-3">Integrity</h3>
+                                <p className="text-gray-500 leading-relaxed">Honest communication and transparent processes. You always know where your project stands.</p>
+                                <div className="mt-6 h-1 w-0 group-hover:w-full bg-gradient-to-r from-deep-space-blue-600 to-transparent transition-all duration-500 rounded-full"></div>
+                            </div>
                         </motion.div>
-                        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }} className="text-center">
-                            <div className="w-16 h-16 bg-yellow-green-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                <Heart className="w-8 h-8 text-deep-space-blue-900" />
+
+                        <motion.div 
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.3 }}
+                            className="group relative bg-white rounded-3xl p-8 border-2 border-gray-100 hover:border-yellow-green-500 transition-all duration-500 hover:shadow-2xl hover:shadow-yellow-green-500/20"
+                        >
+                            <div className="absolute -top-6 left-8">
+                                <div className="w-12 h-12 bg-yellow-green-500 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
+                                    <Palette className="w-6 h-6 text-deep-space-blue-900" />
+                                </div>
                             </div>
-                            <h3 className="text-xl font-bold mb-2">{language === 'en' ? 'Customer First' : 'Le Client Avant Tout'}</h3>
-                            <p className="text-white/70">{language === 'en' ? 'We prioritize your satisfaction with transparent communication and reliable service.' : 'Nous privilégions votre satisfaction avec une communication transparente et un service fiable.'}</p>
+                            <div className="pt-6">
+                                <span className="text-6xl font-bold text-gray-100 group-hover:text-yellow-green-500/20 transition-colors">03</span>
+                                <h3 className="text-xl font-bold text-gray-900 mt-2 mb-3">Innovation</h3>
+                                <p className="text-gray-500 leading-relaxed">Embracing modern techniques and technologies to deliver smarter construction solutions.</p>
+                                <div className="mt-6 h-1 w-0 group-hover:w-full bg-gradient-to-r from-yellow-green-500 to-transparent transition-all duration-500 rounded-full"></div>
+                            </div>
+                        </motion.div>
+
+                        <motion.div 
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.4 }}
+                            className="group relative bg-white rounded-3xl p-8 border-2 border-gray-100 hover:border-deep-space-blue-600 transition-all duration-500 hover:shadow-2xl hover:shadow-deep-space-blue-600/20"
+                        >
+                            <div className="absolute -top-6 left-8">
+                                <div className="w-12 h-12 bg-deep-space-blue-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
+                                    <Heart className="w-6 h-6 text-white" />
+                                </div>
+                            </div>
+                            <div className="pt-6">
+                                <span className="text-6xl font-bold text-gray-100 group-hover:text-deep-space-blue-600/20 transition-colors">04</span>
+                                <h3 className="text-xl font-bold text-gray-900 mt-2 mb-3">Reliability</h3>
+                                <p className="text-gray-500 leading-relaxed">Delivering on our promises, every time. Your timeline is our commitment.</p>
+                                <div className="mt-6 h-1 w-0 group-hover:w-full bg-gradient-to-r from-deep-space-blue-600 to-transparent transition-all duration-500 rounded-full"></div>
+                            </div>
                         </motion.div>
                     </div>
                 </div>
