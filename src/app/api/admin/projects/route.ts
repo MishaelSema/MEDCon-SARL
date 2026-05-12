@@ -23,26 +23,54 @@ export async function POST(request: NextRequest) {
         const { getDatabase } = await import('@/lib/mongodb')
         const db = await getDatabase()
         
+        const { ObjectId } = await import('mongodb')
+        
         const project = {
             ...data,
-            createdAt: new Date(),
+            createdAt: data._id ? undefined : new Date(),
             status: data.status || 'active',
         }
-
+        
         if (data._id) {
-            const { ObjectId } = await import('mongodb')
-            await db.collection('projects').updateOne(
-                { _id: new ObjectId(data._id) },
-                { $set: { ...project, updatedAt: new Date() } }
-            )
-            return NextResponse.json({ success: true, message: 'Project updated' })
+            try {
+                const objectId = new ObjectId(data._id)
+                const existingProject = await db.collection('projects').findOne({ _id: objectId })
+                
+                if (!existingProject) {
+                    return NextResponse.json({ error: 'Project not found' }, { status: 404 })
+                }
+                
+                await db.collection('projects').updateOne(
+                    { _id: objectId },
+                    { 
+                        $set: { 
+                            title: data.title,
+                            scope: data.scope,
+                            location: data.location,
+                            year: data.year,
+                            area: data.area,
+                            description: data.description,
+                            features: data.features,
+                            images: data.images,
+                            mainImage: data.mainImage,
+                            status: data.status || 'active',
+                            serviceIds: data.serviceIds,
+                            updatedAt: new Date()
+                        } 
+                    }
+                )
+                return NextResponse.json({ success: true, message: 'Project updated' })
+            } catch (idError) {
+                console.error('Invalid ObjectId:', idError)
+                return NextResponse.json({ error: 'Invalid project ID format' }, { status: 400 })
+            }
         } else {
             const result = await db.collection('projects').insertOne(project)
             return NextResponse.json({ success: true, insertedId: result.insertedId })
         }
     } catch (error) {
         console.error('Projects POST error:', error)
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+        return NextResponse.json({ error: 'Internal server error', details: String(error) }, { status: 500 })
     }
 }
 
