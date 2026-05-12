@@ -1,19 +1,9 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import './globals.css'
-import Navigation from '@/components/Navigation'
-import Footer from '@/components/Footer'
-import WhatsAppButton from '@/components/WhatsAppButton'
-import NewsletterPopup from '@/components/NewsletterPopup'
-import StructuredData from '@/components/StructuredData'
-import { LanguageProvider } from '@/context/LanguageContext'
-import { Toaster } from 'react-hot-toast'
 
-const inter = Inter({ subsets: ['latin'] })
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://medconstruction-cm.com'
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`
 
-export async function generateMetadata(): Promise<Metadata> {
+export const generateMetadata = (): Metadata => {
   return {
     metadataBase: new URL(SITE_URL),
     title: {
@@ -93,30 +83,59 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
-  return (
-    <html lang="en" className="scroll-smooth">
-      <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" type="image/png" href="/og-image.png" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <meta name="theme-color" content="#073856" />
-      </head>
-      <body className={`${inter.className} antialiased`}>
-        <LanguageProvider>
-          <StructuredData />
-          <Navigation />
-          <main className="min-h-screen">{children}</main>
-          <Footer />
-          <WhatsAppButton />
-          <NewsletterPopup />
-          <Toaster position="top-center" />
-        </LanguageProvider>
-      </body>
-    </html>
-  )
+export const getMetadataForService = async (serviceId: string) => {
+  const res = await fetch(`${SITE_URL}/api/admin/services`)
+  const services = await res.json()
+  const service = services.find((s: any) => s._id === serviceId)
+
+  if (!service) {
+    return {
+      title: 'Our Services | MEDCon SARL',
+      description: 'Explore our professional construction, renovation, interior design, real estate, and merchandise services in Cameroon.',
+      images: [{ url: DEFAULT_OG_IMAGE, width: 1200, height: 630 }],
+    }
+  }
+
+  const image = service.images?.[0] || DEFAULT_OG_IMAGE
+  const title = typeof service.title === 'string' ? service.title : service.title.en
+
+  return {
+    title: `${title} Services | MEDCon SARL`,
+    description: service.description?.en || service.description || `Professional ${title.toLowerCase()} services in Cameroon by MEDCon SARL.`,
+    images: [{ url: image, width: 1200, height: 630, alt: title }],
+    openGraph: {
+      title: `${title} Services | MEDCon SARL`,
+      description: service.description?.en || service.description,
+      images: [{ url: image, width: 1200, height: 630, alt: title }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      images: [image],
+    },
+  }
+}
+
+export const getMetadataForProject = (project: {
+  id: string
+  title: { en: string; fr: string }
+  description: { en: string; fr: string }
+  image: string
+  category: string
+  location: string
+}) => {
+  return {
+    title: `${project.title.en} | MEDCon SARL Portfolio`,
+    description: project.description.en,
+    images: [{ url: project.image, width: 1200, height: 630, alt: project.title.en }],
+    openGraph: {
+      title: `${project.title.en} | MEDCon SARL`,
+      description: project.description.en,
+      images: [{ url: project.image, width: 1200, height: 630, alt: project.title.en }],
+      type: 'article',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      images: [project.image],
+    },
+  }
 }
