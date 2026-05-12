@@ -12,9 +12,7 @@
   }
 }
 
-body:not(.home-page) {
-  padding-top: 60px;
-}
+
 
 @layer utilities {
   .text-gradient {
