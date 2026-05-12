@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react'
 import { 
     ArrowRight, Building2, Home, Wrench, DollarSign, Palette,
     MapPin, FileText, Lightbulb, Phone, Star, ShieldCheck, X, CheckCircle,
-    Award, Users, Heart
+    Award, Users, Heart, HardHat, Hammer, Package
 } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
 import { useForm } from 'react-hook-form'
@@ -26,6 +26,17 @@ interface Testimonial {
     text: string
 }
 
+interface Service {
+    _id: string
+    title: string | { en: string; fr: string }
+    description: string | { en: string; fr: string }
+    features: string[]
+    images: string[]
+    icon?: string
+    showOnHome: boolean
+    order: number
+}
+
 interface GuideSettings {
     title: string
     description: string
@@ -33,11 +44,21 @@ interface GuideSettings {
     enabled: boolean
 }
 
+const SERVICE_ICONS: Record<string, any> = {
+    HardHat: Building2,
+    Hammer: Wrench,
+    Palette: Palette,
+    Building: Home,
+    Package: DollarSign,
+    default: HardHat,
+}
+
 export default function HomePage() {
     const { t, language } = useLanguage()
     const [showTestimonialModal, setShowTestimonialModal] = useState(false)
     const [rating, setRating] = useState(5)
     const [featuredProjects, setFeaturedProjects] = useState<Project[]>([])
+    const [homeServices, setHomeServices] = useState<Service[]>([])
     const [reviews, setReviews] = useState<Testimonial[]>([])
     const [loading, setLoading] = useState(false)
     const [dataLoaded, setDataLoaded] = useState(false)
@@ -63,14 +84,24 @@ export default function HomePage() {
 
     const fetchData = async () => {
         try {
-            const [projectsRes, testimonialsRes] = await Promise.all([
+            const [projectsRes, servicesRes, testimonialsRes] = await Promise.all([
                 fetch('/api/admin/projects'),
+                fetch('/api/admin/services'),
                 fetch('/api/testimonials')
             ])
             
             if (projectsRes.ok) {
                 const projects = await projectsRes.json()
                 setFeaturedProjects(projects.slice(0, 3))
+            }
+            
+            if (servicesRes.ok) {
+                const services = await servicesRes.json()
+                const homeSvcs = services
+                    .filter((s: Service) => s.showOnHome)
+                    .sort((a: Service, b: Service) => a.order - b.order)
+                    .slice(0, 5)
+                setHomeServices(homeSvcs)
             }
             
             if (testimonialsRes.ok) {
@@ -80,6 +111,25 @@ export default function HomePage() {
         } catch (error) {
             console.error('Error fetching data:', error)
         }
+    }
+
+    const getServiceTitle = (title: string | { en: string; fr: string }) => {
+        return typeof title === 'string' ? title : (language === 'fr' ? title.fr : title.en)
+    }
+
+    const getServiceDesc = (desc: string | { en: string; fr: string }) => {
+        return typeof desc === 'string' ? desc : (language === 'fr' ? desc.fr : desc.en)
+    }
+
+    const getServiceIcon = (iconName?: string) => {
+        return iconName && SERVICE_ICONS[iconName] ? SERVICE_ICONS[iconName] : SERVICE_ICONS.default
+    }
+
+    const getServiceGridClass = (index: number, total: number) => {
+        if (total <= 2) return 'md:col-span-6'
+        if (total === 3 && index === 0) return 'md:col-span-12'
+        if (total === 4 && index < 2) return 'md:col-span-6'
+        return 'md:col-span-4'
     }
 
     const stats = [
@@ -94,14 +144,6 @@ export default function HomePage() {
         language === 'en' ? 'Reflect on essential questions before you start.' : 'Réfléchissez aux questions essentielles avant de commencer.',
         language === 'en' ? 'Get inspired with stunning design ideas.' : 'Inspirez-vous d\'idées de design époustouflantes.',
         language === 'en' ? 'Learn about budgeting and cost management.' : 'Apprenez-en plus sur le budget et la gestion des coûts.',
-    ]
-
-    const services = [
-        { key: 'construction', icon: Building2, span: 'md:col-span-4' },
-        { key: 'renovation', icon: Wrench, span: 'md:col-span-4' },
-        { key: 'interior', icon: Palette, span: 'md:col-span-4' },
-        { key: 'realEstate', icon: Home, span: 'md:col-span-6' },
-        { key: 'generalMerchandise', icon: DollarSign, span: 'md:col-span-6' },
     ]
 
     const knowledgeItems = [
@@ -349,25 +391,45 @@ export default function HomePage() {
                         <p className="text-base text-gray-500">{t('services.description')}</p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-                        {services.map((service, index) => (
-                            <motion.div key={service.key} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className={`${service.span} group relative bg-white border border-gray-100 rounded-2xl p-6 hover:border-deep-space-blue-300 transition-all min-h-[200px] flex flex-col justify-between overflow-hidden`}>
-                                <div className="absolute -bottom-8 -right-8 opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none">
-                                    <service.icon className="w-40 h-40 text-gray-300" />
-                                </div>
-                                <div className="relative z-10">
-                                    <div className="w-10 h-10 bg-deep-space-blue-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-deep-space-blue-600 transition-colors">
-                                        <service.icon className="w-5 h-5 text-deep-space-blue-600 group-hover:text-white transition-colors" />
-                                    </div>
-                                    <h3 className="text-lg font-bold text-gray-900 mb-2">{t(`services.${service.key}.title`)}</h3>
-                                    <p className="text-sm text-gray-500 leading-relaxed">{t(`services.${service.key}.description`)}</p>
-                                </div>
-                                <Link href={`/services?service=${service.key}`} className="relative z-10 mt-4 inline-flex items-center gap-1 text-deep-space-blue-600 font-bold text-sm hover:text-deep-space-blue-700">
-                                    {t('services.learnMore')} <ArrowRight className="w-3 h-3" />
-                                </Link>
-                            </motion.div>
-                        ))}
-                    </div>
+                    {homeServices.length === 0 ? (
+                        <div className="text-center py-10">
+                            <p className="text-gray-500">No services available.</p>
+                            <Link href="/services" className="mt-4 inline-block text-deep-space-blue-600 font-bold hover:underline">View All Services</Link>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                            {homeServices.map((service, index) => {
+                                const ServiceIcon = getServiceIcon(service.icon)
+                                const title = getServiceTitle(service.title)
+                                const description = getServiceDesc(service.description)
+                                
+                                return (
+                                    <motion.div 
+                                        key={service._id} 
+                                        initial={{ opacity: 0, y: 20 }} 
+                                        whileInView={{ opacity: 1, y: 0 }} 
+                                        viewport={{ once: true }} 
+                                        transition={{ delay: index * 0.1 }} 
+                                        className={`${getServiceGridClass(index, homeServices.length)} group relative bg-white border border-gray-100 rounded-2xl p-6 hover:border-deep-space-blue-300 transition-all min-h-[200px] flex flex-col justify-between overflow-hidden`}
+                                    >
+                                        <div className="absolute -bottom-8 -right-8 opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none">
+                                            <ServiceIcon className="w-40 h-40 text-gray-300" />
+                                        </div>
+                                        <div className="relative z-10">
+                                            <div className="w-10 h-10 bg-deep-space-blue-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-deep-space-blue-600 transition-colors">
+                                                <ServiceIcon className="w-5 h-5 text-deep-space-blue-600 group-hover:text-white transition-colors" />
+                                            </div>
+                                            <h3 className="text-lg font-bold text-gray-900 mb-2">{title}</h3>
+                                            <p className="text-sm text-gray-500 leading-relaxed line-clamp-2">{description}</p>
+                                        </div>
+                                        <Link href={`/services?service=${service._id}`} className="relative z-10 mt-4 inline-flex items-center gap-1 text-deep-space-blue-600 font-bold text-sm hover:text-deep-space-blue-700">
+                                            {t('services.learnMore')} <ArrowRight className="w-3 h-3" />
+                                        </Link>
+                                    </motion.div>
+                                )
+                            })}
+                        </div>
+                    )}
                 </div>
             </section>
 
