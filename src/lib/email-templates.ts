@@ -484,3 +484,114 @@ export const contactReplyEmail = (data: {
     
     return BASE_TEMPLATE(content)
 }
+
+// Construction Guide Download Confirmation Email (Customer)
+export const guideDownloadEmail = (data: {
+    customerName: string
+    guideTitle: string
+    guideDescription: string
+    downloadUrl?: string
+}) => {
+    const content = `
+        <div style="text-align: center; margin-bottom: 30px;">
+            <div style="width: 80px; height: 80px; background-color: ${COLORS.yellowGreen}; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="${COLORS.deepSpaceBlue}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="12" y1="18" x2="12" y2="12"></line>
+                    <line x1="9" y1="15" x2="15" y2="15"></line>
+                </svg>
+            </div>
+            <h2 style="color: ${COLORS.deepSpaceBlue}; font-size: 26px; margin: 0 0 10px;">
+                Your Free Guide is Ready, ${data.customerName}!
+            </h2>
+            <p style="color: ${COLORS.gray[500]}; font-size: 15px; margin: 0;">
+                Thank you for your interest in our Construction Guide
+            </p>
+        </div>
+        
+        <div style="background: linear-gradient(135deg, ${COLORS.deepSpaceBlue} 0%, ${COLORS.deepSpaceBlueLight} 100%); border-radius: 16px; padding: 30px; margin-bottom: 25px; position: relative; overflow: hidden;">
+            <div style="position: absolute; top: -20px; right: -20px; width: 150px; height: 150px; background: rgba(156, 198, 57, 0.1); border-radius: 50%;"></div>
+            <div style="position: absolute; bottom: -30px; left: -30px; width: 100px; height: 100px; background: rgba(156, 198, 57, 0.1); border-radius: 50%;"></div>
+            
+            <div style="position: relative; z-index: 1;">
+                <p style="color: ${COLORS.yellowGreen}; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 10px;">Free Download</p>
+                <h3 style="color: ${COLORS.white}; font-size: 24px; margin: 0 0 15px;">${data.guideTitle}</h3>
+                <p style="color: rgba(255,255,255,0.8); font-size: 14px; line-height: 1.7; margin: 0;">${data.guideDescription}</p>
+            </div>
+        </div>
+        
+        <div style="background-color: ${COLORS.cornsilk}; border-radius: 12px; padding: 25px; margin-bottom: 25px; border-left: 4px solid ${COLORS.yellowGreen};">
+            <p style="color: ${COLORS.deepSpaceBlue}; font-size: 14px; line-height: 1.7; margin: 0;">
+                <strong>What's Inside:</strong><br><br>
+                ✓ Pros and cons of different construction approaches<br>
+                ✓ Essential questions to ask before starting<br>
+                ✓ Stunning design ideas for inspiration<br>
+                ✓ Budgeting and cost management tips<br>
+                ✓ Common mistakes to avoid
+            </p>
+        </div>
+        
+        ${data.downloadUrl ? `
+        <div style="text-align: center; margin-bottom: 25px;">
+            <a href="${data.downloadUrl}" style="display: inline-block; background-color: ${COLORS.yellowGreen}; color: ${COLORS.deepSpaceBlue}; padding: 16px 40px; border-radius: 30px; font-size: 16px; font-weight: 700; text-decoration: none; box-shadow: 0 4px 15px rgba(156, 198, 57, 0.4);">
+                📥 Download Your Free Guide Now
+            </a>
+        </div>
+        ` : `
+        <div style="text-align: center; margin-bottom: 25px; padding: 25px; background-color: ${COLORS.gray[50]}; border-radius: 12px;">
+            <p style="color: ${COLORS.gray[600]}; font-size: 14px; margin: 0 0 10px;">
+                Your guide will be sent to you shortly via email attachment.
+            </p>
+            <p style="color: ${COLORS.gray[500]}; font-size: 13px; margin: 0;">
+                Please check your inbox in the next few minutes.
+            </p>
+        </div>
+        `}
+        
+        <div style="background-color: ${COLORS.gray[50]}; border-radius: 12px; padding: 25px; margin-bottom: 25px;">
+            <p style="color: ${COLORS.deepSpaceBlue}; font-size: 14px; font-weight: 600; margin: 0 0 15px;">
+                Ready to Start Your Project?
+            </p>
+            <p style="color: ${COLORS.gray[600]}; font-size: 14px; line-height: 1.6; margin: 0 0 20px;">
+                Our team is here to help you turn your construction dreams into reality. Get in touch for a free consultation.
+            </p>
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td style="padding: 8px 0;">
+                        <a href="tel:+237671911489" style="display: inline-flex; align-items: center; gap: 8px; color: ${COLORS.deepSpaceBlue}; text-decoration: none; font-size: 14px; font-weight: 500;">
+                            <span style="background-color: ${COLORS.yellowGreen}; color: ${COLORS.deepSpaceBlue}; padding: 8px; border-radius: 50%;">📞</span>
+                            +237 671 911 489
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px 0;">
+                        <a href="mailto:medconsarl@gmail.com" style="display: inline-flex; align-items: center; gap: 8px; color: ${COLORS.deepSpaceBlue}; text-decoration: none; font-size: 14px; font-weight: 500;">
+                            <span style="background-color: ${COLORS.yellowGreen}; color: ${COLORS.deepSpaceBlue}; padding: 8px; border-radius: 50%;">✉️</span>
+                            medconsarl@gmail.com
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px 0;">
+                        <a href="https://med-con-sarl.vercel.app/contact" style="display: inline-flex; align-items: center; gap: 8px; color: ${COLORS.deepSpaceBlue}; text-decoration: none; font-size: 14px; font-weight: 500;">
+                            <span style="background-color: ${COLORS.yellowGreen}; color: ${COLORS.deepSpaceBlue}; padding: 8px; border-radius: 50%;">🌐</span>
+                            Get a Free Consultation
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        
+        <div style="text-align: center; padding: 20px 0; border-top: 1px solid ${COLORS.gray[200]};">
+            <p style="color: ${COLORS.gray[500]}; font-size: 13px; margin: 0;">
+                Best regards,<br>
+                <strong style="color: ${COLORS.deepSpaceBlue};">The MEDCon SARL Team</strong><br>
+                Building Tomorrow's Dreams Today
+            </p>
+        </div>
+    `
+    
+    return BASE_TEMPLATE(content)
+}

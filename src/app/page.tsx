@@ -186,7 +186,12 @@ export default function HomePage() {
             const res = await fetch('/api/leads', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data),
+                body: JSON.stringify({
+                    ...data,
+                    type: guide.title,
+                    message: guide.description,
+                    downloadUrl: guide.downloadUrl
+                }),
             })
             
             if (res.ok) {
