@@ -80,12 +80,15 @@ export default function ServicesPage() {
         return typeof desc === 'string' ? desc : (language === 'fr' ? desc.fr : desc.en)
     }
 
+    const getTitleStr = (title: string | { en: string; fr: string }) => typeof title === 'string' ? title : title.en
+    const getDescStr = (desc: string | { en: string; fr: string }) => typeof desc === 'string' ? desc : desc.en
+
     const handleOpenModal = (service: Service | null = null) => {
         if (service) {
             setFormData({
                 _id: service._id,
-                title: typeof service.title === 'string' ? service.title : '',
-                description: typeof service.description === 'string' ? service.description : '',
+                title: getTitleStr(service.title) as string,
+                description: getDescStr(service.description) as string,
                 features: service.features || [],
                 images: service.images || [],
                 showOnHome: service.showOnHome ?? true,

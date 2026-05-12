@@ -45,10 +45,14 @@ function ServicesContent() {
     useEffect(() => {
         const serviceParam = searchParams.get('service')
         if (serviceParam && services.length > 0) {
-            const index = services.findIndex(s => s._id === serviceParam || s.title.toLowerCase().replace(/\s+/g, '') === serviceParam)
+            const getTitleStr = (t: string | { en: string; fr: string }) => typeof t === 'string' ? t : t.en
+            const index = services.findIndex(s => s._id === serviceParam || getTitleStr(s.title).toLowerCase().replace(/\s+/g, '') === serviceParam)
             if (index !== -1) setActiveIndex(index)
         }
     }, [searchParams, services])
+
+    const getServiceTitle = (title: string | { en: string; fr: string }) => typeof title === 'string' ? title : (language === 'fr' ? title.fr : title.en)
+    const getServiceDesc = (desc: string | { en: string; fr: string }) => typeof desc === 'string' ? desc : (language === 'fr' ? desc.fr : desc.en)
 
     if (loading) {
         return (
@@ -58,7 +62,17 @@ function ServicesContent() {
         )
     }
 
-    const activeService = services[activeIndex] || services[0]
+    if (services.length === 0) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-deep-space-blue-600" />
+            </div>
+        )
+    }
+
+    const activeService = services[activeIndex]
+    const serviceTitle = getServiceTitle(activeService.title)
+    const serviceDesc = getServiceDesc(activeService.description)
 
     const prevService = () => {
         setActiveIndex((prev) => (prev === 0 ? services.length - 1 : prev - 1))
@@ -143,14 +157,14 @@ function ServicesContent() {
                                     >
                                         <Image
                                             src={activeService.images?.[0] || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&h=800&fit=crop'}
-                                            alt={activeService.title}
+                                            alt={serviceTitle}
                                             fill
                                             className="object-cover"
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
                                         <div className="absolute bottom-6 left-6">
                                             <div className="w-16 h-16 bg-yellow-green-500 rounded-2xl flex items-center justify-center shadow-lg">
-                                                <span className="text-deep-space-blue-600 font-bold text-2xl">{activeService.title.charAt(0)}</span>
+                                                <span className="text-deep-space-blue-600 font-bold text-2xl">{serviceTitle.charAt(0)}</span>
                                             </div>
                                         </div>
                                     </motion.div>
@@ -179,10 +193,10 @@ function ServicesContent() {
                                     transition={{ duration: 0.4 }}
                                 >
                                     <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-                                        {activeService.title}
+                                        {serviceTitle}
                                     </h2>
                                     <p className="text-xl text-gray-600 mb-8">
-                                        {activeService.description}
+                                        {serviceDesc}
                                     </p>
 
                                     <div className="grid grid-cols-2 gap-4 mb-8">
@@ -214,7 +228,7 @@ function ServicesContent() {
                                             ? 'bg-deep-space-blue-600 w-8'
                                             : 'bg-gray-300 hover:bg-gray-400'
                                     }`}
-                                    aria-label={service.title}
+                                    aria-label={getServiceTitle(service.title)}
                                 />
                             ))}
                         </div>
@@ -230,7 +244,7 @@ function ServicesContent() {
                                             : 'bg-white/80 text-gray-700 hover:bg-white'
                                     }`}
                                 >
-                                    {service.title}
+                                    {getServiceTitle(service.title)}
                                 </button>
                             ))}
                         </div>
