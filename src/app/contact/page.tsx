@@ -1,9 +1,9 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { Send, CheckCircle, AlertCircle, Star, ShieldCheck, X } from 'lucide-react'
+import { Send, CheckCircle, AlertCircle, Star, ShieldCheck, X, Loader2 } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
 import { useForm } from 'react-hook-form'
 
@@ -23,20 +23,40 @@ type TestimonialFormData = {
     text: string
 }
 
-const reviews = [
-    { name: 'Dr. Christopher Lee', role: 'Verified Client', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face', rating: 5, text: 'Outstanding service and products. Our project has seen great results with each order delivered exactly as described. Very impressed.' },
-    { name: 'Dr. Nancy White', role: 'Verified Client', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face', rating: 5, text: "We've recommended MEDCon to several clients. Their reliability and quality make them our go-to construction partner." },
-    { name: 'Dr. Stephanie Taylor', role: 'Verified Client', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face', rating: 5, text: 'Outstanding quality and service. The team really knows their craft. A pleasure to work with.' },
-    { name: 'Brian Clark', role: 'Verified Client', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face', rating: 4, text: 'Works well for my needs. The renovation project arrived in great condition. Price is reasonable for the quality.' },
-]
+interface Testimonial {
+    _id: string
+    name: string
+    rating: number
+    text: string
+}
 
 export default function ContactPage() {
-    const { t } = useLanguage()
+    const { t, language } = useLanguage()
     const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>()
     const { register: registerTestimonial, handleSubmit: handleTestimonialSubmit, reset: resetTestimonial } = useForm<TestimonialFormData>()
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
     const [showTestimonialModal, setShowTestimonialModal] = useState(false)
     const [testimonialRating, setTestimonialRating] = useState(5)
+    const [reviews, setReviews] = useState<Testimonial[]>([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        fetchTestimonials()
+    }, [])
+
+    const fetchTestimonials = async () => {
+        try {
+            const res = await fetch('/api/testimonials')
+            if (res.ok) {
+                const data = await res.json()
+                setReviews(data)
+            }
+        } catch (error) {
+            console.error('Error fetching testimonials:', error)
+        } finally {
+            setLoading(false)
+        }
+    }
 
     const onSubmit = async (data: FormData) => {
         setStatus('loading')
@@ -147,26 +167,36 @@ export default function ContactPage() {
                         <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mt-4">{t('testimonials.title')}</h2>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {reviews.map((review, index) => (
-                            <motion.div key={review.name} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="bg-white border border-gray-200 rounded-3xl p-8 hover:shadow-lg transition-shadow">
-                                <div className="flex items-center gap-3 mb-4">
-                                    <div className="relative w-14 h-14 rounded-full overflow-hidden bg-deep-space-blue-50 flex-shrink-0">
-                                        <Image src={review.avatar} alt={review.name} fill className="object-cover" />
-                                    </div>
-                                    <div>
-                                        <div className="flex items-center gap-2">
-                                            <h4 className="font-bold text-gray-900">{review.name}</h4>
-                                            <span className="flex items-center gap-1 text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded-full font-medium"><ShieldCheck className="w-3 h-3" /> Verified</span>
+                    {loading ? (
+                        <div className="flex items-center justify-center py-20">
+                            <Loader2 className="w-8 h-8 animate-spin text-deep-space-blue-600" />
+                        </div>
+                    ) : reviews.length === 0 ? (
+                        <div className="text-center py-20">
+                            <p className="text-gray-500 text-lg">{language === 'en' ? 'No testimonials yet.' : 'Aucun témoignage pour le moment.'}</p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {reviews.map((review, index) => (
+                                <motion.div key={review._id} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="bg-white border border-gray-200 rounded-3xl p-8 hover:shadow-lg transition-shadow">
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="w-14 h-14 rounded-full bg-deep-space-blue-600 flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                                            {review.name.charAt(0)}
                                         </div>
-                                        <p className="text-sm text-gray-500">{review.role}</p>
+                                        <div>
+                                            <div className="flex items-center gap-2">
+                                                <h4 className="font-bold text-gray-900">{review.name}</h4>
+                                                <span className="flex items-center gap-1 text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded-full font-medium"><ShieldCheck className="w-3 h-3" /> Verified</span>
+                                            </div>
+                                            <p className="text-sm text-gray-500">Client</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="flex items-center gap-1 mb-4">{renderStars(review.rating)}</div>
-                                <p className="text-gray-600 leading-relaxed text-sm border-l-4 border-yellow-green-400 pl-4 italic">"{review.text}"</p>
-                            </motion.div>
-                        ))}
-                    </div>
+                                    <div className="flex items-center gap-1 mb-4">{renderStars(review.rating)}</div>
+                                    <p className="text-gray-600 leading-relaxed text-sm border-l-4 border-yellow-green-400 pl-4 italic">"{review.text}"</p>
+                                </motion.div>
+                            ))}
+                        </div>
+                    )}
 
                     <div className="text-center mt-16">
                         <button onClick={() => setShowTestimonialModal(true)} className="inline-flex items-center gap-3 px-10 py-4 bg-deep-space-blue-600 text-white font-bold rounded-full hover:bg-deep-space-blue-700 transition-colors text-lg">
