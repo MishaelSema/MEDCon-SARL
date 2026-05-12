@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sendEmail } from '@/lib/nodemailer'
+import { testimonialNotificationEmail } from '@/lib/email-templates'
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'medcocoltd@gmail.com'
 
@@ -30,20 +31,8 @@ export async function POST(request: NextRequest) {
 
         await sendEmail({
             to: ADMIN_EMAIL,
-            subject: `New Testimonial Submission from ${name} - MEDCon SARL`,
-            html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <h2 style="color: #073856;">New Testimonial Submission</h2>
-                <p><strong>Name:</strong> ${name}</p>
-                <p><strong>Email:</strong> ${email}</p>
-                <p><strong>Rating:</strong> ${rating || 5}/5 stars</p>
-                <p><strong>Review:</strong></p>
-                <blockquote style="background: #fefce8; padding: 15px; border-left: 4px solid #9cc639; margin: 10px 0;">
-                    ${text}
-                </blockquote>
-                <p>Review this testimonial in the admin dashboard and approve it to display on the website.</p>
-            </div>
-            `,
+            subject: `New Testimonial from ${name} - MEDCon SARL`,
+            html: testimonialNotificationEmail({ name, email, rating: rating || 5, text }),
         })
 
         return NextResponse.json({ success: true })

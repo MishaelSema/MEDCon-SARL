@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { sendEmail } from '@/lib/nodemailer'
+import { leadNotificationEmail } from '@/lib/email-templates'
+
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'medcocoltd@gmail.com'
 
 export async function POST(request: NextRequest) {
     try {
         const data = await request.json()
-        const { name, email } = data
+        const { name, phone, email, type, budget, timeline, location, message } = data
 
         if (!name || !email) {
             return NextResponse.json({ error: 'Name and email are required' }, { status: 400 })
@@ -19,11 +23,25 @@ export async function POST(request: NextRequest) {
                 return NextResponse.json({ success: true, message: 'You are already subscribed!' })
             }
             
-            await db.collection('leads').insertOne({
+            const lead = {
                 name,
+                phone,
                 email,
+                type: type || 'Not specified',
+                budget: budget || 'Not specified',
+                timeline: timeline || 'Not specified',
+                location: location || 'Not specified',
+                message,
                 source: 'construction-guide',
                 createdAt: new Date(),
+            }
+            
+            await db.collection('leads').insertOne(lead)
+
+            await sendEmail({
+                to: ADMIN_EMAIL,
+                subject: `New Lead: ${name} downloaded Construction Guide - MEDCon SARL`,
+                html: leadNotificationEmail({ name, phone, type: type || 'Not specified', budget, timeline, location, message }),
             })
         } catch (dbError) {
             console.log('MongoDB not configured, skipping database insert')
