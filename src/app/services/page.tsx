@@ -198,8 +198,27 @@ function ServicesContent() {
                                                 <span className="text-deep-space-blue-600 font-bold text-2xl">{serviceTitle.charAt(0)}</span>
                                             </div>
                                         </div>
+                                        {activeService.images?.length > 1 && (
+                                            <div className="absolute top-4 right-4 px-3 py-1 bg-black/50 text-white text-sm rounded-full">
+                                                {activeService.images.length} images
+                                            </div>
+                                        )}
                                     </motion.div>
                                 </AnimatePresence>
+
+                                {activeService.images?.length > 1 && (
+                                    <div className="grid grid-cols-4 gap-2 mt-4">
+                                        {activeService.images.map((img, i) => (
+                                            <div 
+                                                key={i} 
+                                                className={`relative h-20 rounded-xl overflow-hidden cursor-pointer border-2 transition-all ${lightboxIndex === i ? 'border-deep-space-blue-600' : 'border-transparent hover:border-yellow-green-500'}`}
+                                                onClick={() => openLightbox(i)}
+                                            >
+                                                <Image src={img} alt={`${serviceTitle} ${i + 1}`} fill className="object-cover" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
 
                                 <button
                                     onClick={prevService}
