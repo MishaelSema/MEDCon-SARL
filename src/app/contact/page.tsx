@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { Send, CheckCircle, AlertCircle, Star, ShieldCheck, X, Loader2 } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
 import { useForm } from 'react-hook-form'
+import Toast from '@/components/Toast'
 
 type FormData = {
     name: string
@@ -39,6 +40,7 @@ export default function ContactPage() {
     const [testimonialRating, setTestimonialRating] = useState(5)
     const [reviews, setReviews] = useState<Testimonial[]>([])
     const [loading, setLoading] = useState(true)
+    const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
     useEffect(() => {
         fetchTestimonials()
@@ -69,8 +71,11 @@ export default function ContactPage() {
     const onTestimonialSubmit = async (data: TestimonialFormData) => {
         try {
             await fetch('/api/testimonials', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...data, rating: testimonialRating }) })
-            setShowTestimonialModal(false); resetTestimonial(); alert('Thank you! Your testimonial has been submitted for review.')
-        } catch { alert('Something went wrong. Please try again.') }
+            setShowTestimonialModal(false); resetTestimonial()
+            setToast({ message: language === 'en' ? 'Thank you! Your testimonial has been submitted for review.' : 'Merci! Votre témoignage a été soumis pour examen.', type: 'success' })
+        } catch { 
+            setToast({ message: language === 'en' ? 'Something went wrong. Please try again.' : 'Une erreur s\'est produite. Veuillez réessayer.', type: 'error' }) 
+        }
     }
 
     const renderStars = (rating: number) => (
@@ -238,6 +243,14 @@ export default function ContactPage() {
                         </form>
                     </motion.div>
                 </div>
+            )}
+
+            {toast && (
+                <Toast 
+                    message={toast.message} 
+                    type={toast.type} 
+                    onClose={() => setToast(null)} 
+                />
             )}
         </div>
     )

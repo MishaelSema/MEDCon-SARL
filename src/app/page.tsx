@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
 import { useForm } from 'react-hook-form'
+import Toast from '@/components/Toast'
 
 interface Project {
     _id: string
@@ -71,6 +72,7 @@ export default function HomePage() {
     const [guideSubmitted, setGuideSubmitted] = useState(false)
     const { register: registerGuide, handleSubmit: handleGuideSubmit, formState: { errors: guideErrors }, reset: resetGuide } = useForm()
     const { register, handleSubmit, reset, formState: { errors } } = useForm()
+    const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
     useEffect(() => {
         const savedGuide = localStorage.getItem('guideSettings')
@@ -212,9 +214,9 @@ export default function HomePage() {
             setShowTestimonialModal(false)
             reset()
             setRating(5)
-            alert('Thank you! Your testimonial has been submitted for review.')
+            setToast({ message: language === 'en' ? 'Thank you! Your testimonial has been submitted for review.' : 'Merci! Votre témoignage a été soumis pour examen.', type: 'success' })
         } catch (err) {
-            alert('Something went wrong. Please try again.')
+            setToast({ message: language === 'en' ? 'Something went wrong. Please try again.' : 'Une erreur s\'est produite. Veuillez réessayer.', type: 'error' })
         }
     }
 
@@ -691,6 +693,14 @@ export default function HomePage() {
                         </form>
                     </motion.div>
                 </div>
+            )}
+
+            {toast && (
+                <Toast 
+                    message={toast.message} 
+                    type={toast.type} 
+                    onClose={() => setToast(null)} 
+                />
             )}
         </div>
     )
