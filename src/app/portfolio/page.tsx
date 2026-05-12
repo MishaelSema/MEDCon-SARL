@@ -171,9 +171,9 @@ export default function PortfolioPage() {
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                             <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-full group-hover:translate-y-0 transition-transform">
                                                 <span className="inline-block px-3 py-1 bg-yellow-green-500 text-deep-space-blue-600 text-sm font-bold rounded-full mb-2">
-                                                    {p.serviceIds?.length 
-                                                        ? String(getServiceTitle(services.find(s => s._id === p.serviceIds?.[0]) || { _id: '', title: p.scope } as Service))
-                                                        : p.scope}
+                                                    {project.serviceIds?.length 
+                                                        ? String(getServiceTitle(services.find(s => s._id === project.serviceIds?.[0]) || { _id: '', title: project.scope } as Service))
+                                                        : project.scope}
                                                 </span>
                                                 <div className="flex items-center justify-between">
                                                     <span className="text-white text-sm">{project.location}</span>
