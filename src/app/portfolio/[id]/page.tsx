@@ -86,8 +86,8 @@ export default function PortfolioDetailPage({ params }: { params: { id: string }
         )
     }
 
-    const images = project.images?.length > 0 ? project.images : (project.mainImage ? [project.mainImage] : [])
-    const mainImage = images[0] || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&h=800&fit=crop'
+    const mainImage = project.mainImage || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&h=800&fit=crop'
+    const galleryImages = project.images?.length > 0 ? project.images : []
     const title = getLocalizedText(project.title)
     const description = getLocalizedText(project.description)
     const features = getLocalizedFeatures(project.features)
@@ -177,13 +177,13 @@ export default function PortfolioDetailPage({ params }: { params: { id: string }
                                     </div>
                                 )}
 
-                                {images.length > 1 && (
+                                {galleryImages.length > 0 && (
                                     <div className="grid grid-cols-3 gap-4 mt-8">
-                                        {images.slice(1).map((img, i) => (
+                                        {galleryImages.map((img, i) => (
                                             <div key={i} className="relative h-48 rounded-xl overflow-hidden shadow-md">
                                                 <Image
                                                     src={img}
-                                                    alt={`${title} ${i + 2}`}
+                                                    alt={`${title} ${i + 1}`}
                                                     fill
                                                     className="object-cover"
                                                 />

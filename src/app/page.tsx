@@ -125,11 +125,23 @@ export default function HomePage() {
         return iconName && SERVICE_ICONS[iconName] ? SERVICE_ICONS[iconName] : SERVICE_ICONS.default
     }
 
-    const getServiceGridClass = (index: number, total: number) => {
-        if (total <= 2) return 'md:col-span-6'
-        if (total === 3 && index === 0) return 'md:col-span-12'
-        if (total === 4 && index < 2) return 'md:col-span-6'
-        return 'md:col-span-4'
+    const getLocalizedText = (text: string | { en: string; fr: string }) => {
+        return typeof text === 'string' ? text : (language === 'fr' ? text.fr : text.en)
+    }
+
+    const getProjectGridClass = (index: number, total: number) => {
+        if (total === 5) {
+            return index < 3 ? 'md:col-span-4' : 'md:col-span-6'
+        }
+        if (total === 4) return 'md:col-span-6'
+        if (total === 3) return 'md:col-span-4'
+        if (total === 2) return 'md:col-span-6'
+        return 'md:col-span-12'
+    }
+
+    const getProjectRowClass = (index: number, total: number) => {
+        if (total === 5 && index === 3) return 'md:mt-6'
+        return ''
     }
 
     const stats = [
@@ -357,17 +369,17 @@ export default function HomePage() {
                             <Link href="/portfolio" className="mt-4 inline-block text-deep-space-blue-600 font-bold hover:underline">View All Projects</Link>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                             {featuredProjects.map((project, index) => (
-                                <motion.div key={project._id} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="group">
+                                <motion.div key={project._id} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className={`group ${getProjectGridClass(index, featuredProjects.length)} ${getProjectRowClass(index, featuredProjects.length)}`}>
                                     <Link href={`/portfolio/${project._id}`} className="block">
                                         <div className="relative h-[300px] rounded-2xl overflow-hidden mb-4 shadow-lg">
-                                            <Image src={project.mainImage || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&h=400&fit=crop'} alt={project.title} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
+                                            <Image src={project.mainImage || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&h=400&fit=crop'} alt={String(getLocalizedText(project.title))} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                                             <div className="absolute top-3 right-3 bg-yellow-green-500 px-3 py-1 rounded-full font-bold text-xs text-gray-900">Featured</div>
                                             <div className="absolute bottom-4 left-4 text-white">
                                                 <div className="flex items-center gap-1 text-xs font-bold text-yellow-green-400 mb-1 uppercase tracking-wide"><MapPin className="w-3 h-3" /> {project.location}</div>
-                                                <h3 className="text-lg font-bold">{project.title}</h3>
+                                                <h3 className="text-lg font-bold">{String(getLocalizedText(project.title))}</h3>
                                             </div>
                                         </div>
                                     </Link>
