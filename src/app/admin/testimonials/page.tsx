@@ -8,7 +8,8 @@ interface Testimonial {
     name: string
     email: string
     rating: number
-    text: string
+    content: string
+    text?: string
     status: string
     createdAt: string
 }
@@ -118,7 +119,7 @@ export default function TestimonialsPage() {
                                                 {renderStars(t.rating)}
                                             </div>
                                             <p className="text-sm text-gray-500 mt-1">{t.email}</p>
-                                            <p className="text-gray-700 mt-3 leading-relaxed border-l-4 border-yellow-green-400 pl-4 italic">"{t.text}"</p>
+                                            <p className="text-gray-700 mt-3 leading-relaxed border-l-4 border-yellow-green-400 pl-4 italic">"{t.content || t.text}"</p>
                                             <p className="text-xs text-gray-400 mt-3">Submitted: {new Date(t.createdAt).toLocaleDateString()}</p>
                                         </div>
                                     </div>
@@ -169,7 +170,7 @@ export default function TestimonialsPage() {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">{renderStars(t.rating)}</td>
-                                            <td className="px-6 py-4"><p className="text-sm text-gray-600 max-w-xs truncate">{t.text}</p></td>
+                                            <td className="px-6 py-4"><p className="text-sm text-gray-600 max-w-xs truncate">{t.content || t.text}</p></td>
                                             <td className="px-6 py-4">
                                                 {t.status === 'approved' ? (
                                                     <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full flex items-center gap-1 w-fit"><Check className="w-3 h-3" /> Approved</span>

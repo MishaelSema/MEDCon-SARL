@@ -89,7 +89,7 @@ export default function ContactPage() {
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent to-deep-space-blue-950/50"></div>
                 </div>
 
-                <div className="w-full lg:w-1/2 bg-white px-8 md:px-16 py-16 flex flex-col justify-center">
+                <div className="w-full lg:w-1/2 bg-white px-8 md:px-16 py-24 flex flex-col justify-center" style={{ paddingTop: '130px' }}>
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
                         <span className="text-yellow-green-500 font-bold tracking-widest uppercase text-sm">{t('contact.subtitle')}</span>
                         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mt-4 mb-6">{t('contact.title')}</h1>

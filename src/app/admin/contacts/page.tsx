@@ -1,21 +1,60 @@
 'use client'
 
-import { useState } from 'react'
-import { Mail, Phone, Send } from 'lucide-react'
-
-const messages = [
-    { id: '1', name: 'Jean Kamga', email: 'jean.kamga@email.com', phone: '+237 612 345 678', service: 'construction', message: 'Hi, I am interested in building a residential villa in Yaounde. Can you provide a quote?', status: 'unread', date: '2024-01-20 10:30' },
-    { id: '2', name: 'Marie Nguema', email: 'marie.nguema@email.com', phone: '+237 678 901 234', service: 'renovation', message: 'We need someone to renovate our office space. It is about 200 square meters. Please contact me for details.', status: 'unread', date: '2024-01-19 14:15' },
-    { id: '3', name: 'Paul Essomba', email: 'paul.essomba@email.com', phone: '+237 693 456 789', service: 'realEstate', message: 'I am looking for property management services in Douala. Can you help?', status: 'read', date: '2024-01-18 09:45' },
-]
+import { useState, useEffect } from 'react'
+import { Mail, Phone, Send, Trash2 } from 'lucide-react'
 
 export default function ContactsPage() {
-    const [list, setList] = useState(messages)
+    const [list, setList] = useState<any[]>([])
     const [selectedMessage, setSelectedMessage] = useState<any>(null)
     const [replyText, setReplyText] = useState('')
 
-    const markAsRead = (id: string) => {
-        setList(list.map(m => m.id === id ? { ...m, status: 'read' } : m))
+    useEffect(() => {
+        fetchMessages()
+    }, [])
+
+    const fetchMessages = async () => {
+        const token = localStorage.getItem('adminToken')
+        if (!token) return
+
+        try {
+            const res = await fetch('/api/contact', { headers: { Authorization: `Bearer ${token}` } })
+            if (res.ok) {
+                const data = await res.json()
+                setList(data)
+            }
+        } catch (error) {
+            console.error('Error fetching contacts:', error)
+        }
+    }
+
+    const markAsRead = async (id: string) => {
+        const token = localStorage.getItem('adminToken')
+        try {
+            await fetch('/api/contact', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ id, read: true })
+            })
+            setList(list.map(m => m._id === id ? { ...m, read: true } : m))
+        } catch (error) {
+            console.error('Error marking as read:', error)
+        }
+    }
+
+    const deleteMessage = async (id: string) => {
+        const token = localStorage.getItem('adminToken')
+        if (!confirm('Delete this message?')) return
+
+        try {
+            await fetch(`/api/contact?id=${id}`, {
+                method: 'DELETE',
+                headers: { Authorization: `Bearer ${token}` }
+            })
+            setList(list.filter(m => m._id !== id))
+            if (selectedMessage?._id === id) setSelectedMessage(null)
+        } catch (error) {
+            console.error('Error deleting message:', error)
+        }
     }
 
     const sendReply = () => {
@@ -26,66 +65,80 @@ export default function ContactsPage() {
         }
     }
 
+    const formatDate = (dateStr: string) => {
+        return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+    }
+
     return (
         <div>
             <div className="mb-6 flex items-center gap-4">
                 <h1 className="text-2xl font-bold text-gray-900">Contact Messages</h1>
-                <span className="px-3 py-1 bg-red-100 text-red-700 text-sm font-bold rounded-full">{list.filter(m => m.status === 'unread').length} Unread</span>
+                <span className="px-3 py-1 bg-red-100 text-red-700 text-sm font-bold rounded-full">{list.filter(m => !m.read).length} Unread</span>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
                     <div className="divide-y divide-gray-100">
-                        {list.map((msg) => (
+                        {list.length > 0 ? list.map((msg) => (
                             <div
-                                key={msg.id}
-                                onClick={() => { setSelectedMessage(msg); markAsRead(msg.id) }}
-                                className={`p-5 cursor-pointer hover:bg-gray-50 transition-colors ${selectedMessage?.id === msg.id ? 'bg-deep-space-blue-50' : ''}`}
+                                key={msg._id}
+                                onClick={() => { setSelectedMessage(msg); markAsRead(msg._id) }}
+                                className={`p-5 cursor-pointer hover:bg-gray-50 transition-colors ${selectedMessage?._id === msg._id ? 'bg-deep-space-blue-50' : ''}`}
                             >
                                 <div className="flex items-start justify-between">
                                     <div className="flex items-start gap-4">
-                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${msg.status === 'unread' ? 'bg-deep-space-blue-600 text-white' : 'bg-gray-200 text-gray-600'}`}>
-                                            {msg.name.charAt(0)}
+                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${!msg.read ? 'bg-deep-space-blue-600 text-white' : 'bg-gray-200 text-gray-600'}`}>
+                                            {msg.name?.charAt(0)}
                                         </div>
                                         <div>
                                             <div className="flex items-center gap-2">
-                                                <h3 className={`font-bold ${msg.status === 'unread' ? 'text-gray-900' : 'text-gray-700'}`}>{msg.name}</h3>
-                                                {msg.status === 'unread' && <span className="w-2 h-2 bg-deep-space-blue-600 rounded-full"></span>}
+                                                <h3 className={`font-bold ${!msg.read ? 'text-gray-900' : 'text-gray-700'}`}>{msg.name}</h3>
+                                                {!msg.read && <span className="w-2 h-2 bg-deep-space-blue-600 rounded-full"></span>}
                                             </div>
                                             <p className="text-sm text-gray-500 mt-0.5">{msg.email}</p>
                                             <p className="text-sm text-gray-600 mt-2 line-clamp-2">{msg.message}</p>
                                         </div>
                                     </div>
-                                    <div className="text-right">
-                                        <p className="text-xs text-gray-400">{msg.date}</p>
-                                        <p className="text-xs mt-1 px-2 py-1 bg-gray-100 rounded-full text-gray-600">{msg.service}</p>
+                                    <div className="text-right flex flex-col items-end gap-2">
+                                        <p className="text-xs text-gray-400">{formatDate(msg.createdAt)}</p>
+                                        {msg.service && <p className="text-xs mt-1 px-2 py-1 bg-gray-100 rounded-full text-gray-600">{msg.service}</p>}
+                                        <button onClick={(e) => { e.stopPropagation(); deleteMessage(msg._id) }} className="text-red-400 hover:text-red-600 p-1">
+                                            <Trash2 className="w-4 h-4" />
+                                        </button>
                                     </div>
                                 </div>
                             </div>
-                        ))}
+                        )) : (
+                            <p className="text-gray-500 text-center py-8">No messages yet</p>
+                        )}
                     </div>
                 </div>
 
                 <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
                     {selectedMessage ? (
                         <div className="h-full flex flex-col">
-                            <div className="p-6 border-b">
+                            <div className="p-6 border-b flex justify-between items-center">
                                 <h3 className="text-lg font-bold text-gray-900">Message Details</h3>
+                                <button onClick={() => deleteMessage(selectedMessage._id)} className="text-red-400 hover:text-red-600 p-2">
+                                    <Trash2 className="w-5 h-5" />
+                                </button>
                             </div>
                             <div className="p-6 flex-1 overflow-y-auto">
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-                                        <div className="w-12 h-12 bg-deep-space-blue-100 rounded-full flex items-center justify-center text-deep-space-blue-600 font-bold text-lg">{selectedMessage.name.charAt(0)}</div>
+                                        <div className="w-12 h-12 bg-deep-space-blue-100 rounded-full flex items-center justify-center text-deep-space-blue-600 font-bold text-lg">{selectedMessage.name?.charAt(0)}</div>
                                         <div>
                                             <h4 className="font-bold text-gray-900">{selectedMessage.name}</h4>
                                             <p className="text-sm text-gray-500">{selectedMessage.email}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-6 text-sm">
-                                        <a href={`tel:${selectedMessage.phone}`} className="flex items-center gap-2 text-deep-space-blue-600 hover:underline">
-                                            <Phone className="w-4 h-4" /> {selectedMessage.phone}
-                                        </a>
-                                        <span className="px-3 py-1 bg-gray-100 rounded-full text-gray-600">{selectedMessage.service}</span>
+                                        {selectedMessage.phone && (
+                                            <a href={`tel:${selectedMessage.phone}`} className="flex items-center gap-2 text-deep-space-blue-600 hover:underline">
+                                                <Phone className="w-4 h-4" /> {selectedMessage.phone}
+                                            </a>
+                                        )}
+                                        {selectedMessage.service && <span className="px-3 py-1 bg-gray-100 rounded-full text-gray-600">{selectedMessage.service}</span>}
                                     </div>
                                     <div className="p-4 bg-yellow-green-50 rounded-xl border-l-4 border-yellow-green-400">
                                         <p className="text-gray-700 leading-relaxed">{selectedMessage.message}</p>
