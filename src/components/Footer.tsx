@@ -40,7 +40,7 @@ const Footer = () => {
             className="lg:col-span-2"
           >
             <div className="mb-4">
-              <Image src={logo} alt="MEDCon SARL" width={180} height={72} className="h-16 w-auto" />
+              <Image src={logo} alt="MEDCon SARL" width={160} height={64} className="h-14 w-auto md:h-16" />
             </div>
             <p className="text-gray-300 mb-6 max-w-md">
               {t('footer.description')}
@@ -56,7 +56,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center gap-3 text-gray-300">
                 <Mail className="w-4 h-4 text-yellow-green-400" />
-                <a href="mailto:medcocoltd@gmail.com" className="hover:text-white transition-colors">medcocoltd@gmail.com</a>
+                <a href="mailto:medconsarl@gmail.com" className="hover:text-white transition-colors">medconsarl@gmail.com</a>
               </div>
             </div>
           </motion.div>

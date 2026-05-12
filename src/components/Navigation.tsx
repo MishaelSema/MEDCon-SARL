@@ -83,7 +83,7 @@ export default function Navigation() {
                 <div className="max-w-7xl mx-auto px-2 py-2">
                     <div className="flex items-center justify-between">
                         <Link href="/" className="pl-2">
-                            <Image src={logo} alt="MEDCon SARL" width={140} height={56} className="h-14 w-auto" />
+                            <Image src={logo} alt="MEDCon SARL" width={120} height={48} className="h-10 w-auto lg:h-14" />
                         </Link>
 
                         <div className="hidden lg:flex items-center gap-1">

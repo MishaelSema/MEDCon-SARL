@@ -11,7 +11,7 @@ export default function StructuredData() {
       description: 'Professional construction, renovation, and real estate services in Yaoundé, Cameroon.',
       url: 'https://medconstruction-cm.com',
       telephone: '+237671911489',
-      email: 'medcocoltd@gmail.com',
+      email: 'medconsarl@gmail.com',
       address: {
         '@type': 'PostalAddress',
         addressLocality: 'Yaoundé',

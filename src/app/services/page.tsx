@@ -261,7 +261,7 @@ function ServicesContent() {
                                 {language === 'en' ? 'Contact Us' : 'Contactez-Nous'}
                             </Link>
                             <a
-                                href="mailto:medcocoltd@gmail.com"
+                                href="mailto:medconsarl@gmail.com"
                                 className="flex items-center justify-center gap-2 px-6 py-4 bg-white text-deep-space-blue-600 font-bold rounded-full hover:bg-gray-100 transition-colors"
                             >
                                 <Mail className="w-5 h-5" />

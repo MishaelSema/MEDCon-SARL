@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { sendEmail } from '@/lib/nodemailer'
 import { testimonialNotificationEmail } from '@/lib/email-templates'
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'medcocoltd@gmail.com'
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'medconsarl@gmail.com'
 
 export async function POST(request: NextRequest) {
     try {

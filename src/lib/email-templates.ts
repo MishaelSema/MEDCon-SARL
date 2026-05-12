@@ -74,7 +74,7 @@ export const BASE_TEMPLATE = (content: string, footerExtra = '') => `
                                 📞 +237 671 911 489
                             </p>
                             <p style="color: rgba(255,255,255,0.8); font-size: 13px; margin: 0 0 8px;">
-                                ✉️ medcocoltd@gmail.com
+                                ✉️ medconsarl@gmail.com
                             </p>
                             <p style="color: rgba(255,255,255,0.8); font-size: 13px; margin: 0 0 20px;">
                                 📍 Yaoundé, Cameroon
@@ -213,7 +213,7 @@ export const thankYouEmail = (name: string) => {
                 <tr>
                     <td style="padding: 8px 0;">
                         <a href="mailto:medcocoltd@gmail.com" style="color: ${COLORS.deepSpaceBlue}; text-decoration: none; font-size: 14px;">
-                            ✉️ medcocoltd@gmail.com
+                            ✉️ medconsarl@gmail.com
                         </a>
                     </td>
                 </tr>
