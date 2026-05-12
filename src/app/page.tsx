@@ -6,7 +6,8 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { 
     ArrowRight, Building2, Home, Wrench, DollarSign, Palette,
-    MapPin, FileText, Lightbulb, Phone, Star, ShieldCheck, X, Loader2, CheckCircle
+    MapPin, FileText, Lightbulb, Phone, Star, ShieldCheck, X, Loader2, CheckCircle,
+    Award, Users, Heart
 } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
 import { useForm } from 'react-hook-form'
@@ -174,11 +175,11 @@ export default function HomePage() {
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
                     <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
                         <span className="text-yellow-green-400 font-bold tracking-[0.3em] uppercase text-sm mb-6 block">{t('hero.tagline')}</span>
-                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8">
+                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8 pt-24">
                             {t('hero.title')}<br />
                             <span className="relative inline-block mt-2">
                                 <span className="relative z-10 text-gray-900">{t('hero.titleAccent')}</span>
-                                <svg className="absolute -left-4 -top-4 w-[400px] -z-0 text-yellow-green-500 opacity-80" viewBox="0 0 500 500" preserveAspectRatio="none" style={{ left: '150px', top: '95px', width: '400px' }}>
+                                <svg className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[60%] w-[130%] -z-0 text-yellow-green-500 opacity-80" viewBox="0 0 500 500" preserveAspectRatio="none">
                                     <g transform="matrix(1, 0, 0, 1, 209.8228, 182.775528)">
                                         <path d="M 266.104 36.352 C 307.627 31.725 228.584 24.012 192.565 21.313 C 156.544 18.613 131.032 13.6 206.07 15.529 C 281.112 17.071 273.607 8.973 159.546 1.647 C 44.985 -6.066 -143.12 0.104 -143.12 0.104 C -223.66 -0.281 -189.14 56.018 -195.14 72.599 C -201.15 89.181 -192.65 102.292 -184.64 112.704 C -176.64 122.73 -186.64 125.043 -156.12 133.912 C -125.62 142.781 -64.074 127.743 119.526 125.043 C 294.118 122.344 212.074 111.547 172.054 108.461 C 132.03 105.377 149.542 102.678 216.576 99.978 C 283.613 97.664 207.571 91.88 214.074 85.711 C 221.079 79.54 303.623 79.54 240.589 72.213 C 228.584 70.671 266.605 61.803 236.588 60.26 C 206.572 58.718 216.576 55.247 255.099 54.091 C 293.117 52.933 267.603 45.22 246.092 44.064 C 225.081 43.292 224.582 40.979 266.104 36.352 Z" fill="currentColor" />
                                     </g>
@@ -357,9 +358,9 @@ export default function HomePage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
                         {services.map((service, index) => (
-                            <motion.div key={service.key} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className={`${service.span} group relative bg-white border border-gray-100 rounded-2xl p-6 hover:border-deep-space-blue-300 transition-all min-h-[200px] flex flex-col justify-between`}>
-                                <div className="absolute -bottom-6 -right-6 opacity-5 group-hover:opacity-15 scale-150 transition-all duration-500">
-                                    <service.icon className="w-32 h-32 text-gray-300" />
+                            <motion.div key={service.key} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className={`${service.span} group relative bg-white border border-gray-100 rounded-2xl p-6 hover:border-deep-space-blue-300 transition-all min-h-[200px] flex flex-col justify-between overflow-hidden`}>
+                                <div className="absolute -bottom-8 -right-8 opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none">
+                                    <service.icon className="w-40 h-40 text-gray-300" />
                                 </div>
                                 <div className="relative z-10">
                                     <div className="w-10 h-10 bg-deep-space-blue-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-deep-space-blue-600 transition-colors">
@@ -373,6 +374,38 @@ export default function HomePage() {
                                 </Link>
                             </motion.div>
                         ))}
+                    </div>
+                </div>
+            </section>
+
+            <section className="py-20 bg-deep-space-blue-600 text-white">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-12">
+                        <span className="text-yellow-green-400 font-bold tracking-widest uppercase text-xs">Why Choose Us</span>
+                        <h2 className="text-3xl md:text-4xl font-bold mt-3">The MEDCon Advantage</h2>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="text-center">
+                            <div className="w-16 h-16 bg-yellow-green-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <Award className="w-8 h-8 text-deep-space-blue-900" />
+                            </div>
+                            <h3 className="text-xl font-bold mb-2">{language === 'en' ? '5+ Years Experience' : '5+ Années d\'Expérience'}</h3>
+                            <p className="text-white/70">{language === 'en' ? 'Trusted expertise in construction across Cameroon with hundreds of successful projects completed.' : 'Expertise fiable dans la construction à travers le Cameroun avec des centaines de projets réussis.'}</p>
+                        </motion.div>
+                        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="text-center">
+                            <div className="w-16 h-16 bg-yellow-green-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <Users className="w-8 h-8 text-deep-space-blue-900" />
+                            </div>
+                            <h3 className="text-xl font-bold mb-2">{language === 'en' ? 'Expert Team' : 'Équipe Experte'}</h3>
+                            <p className="text-white/70">{language === 'en' ? '15+ skilled professionals ready to bring your vision to life with quality craftsmanship.' : '15+ professionnels qualifiés prêts à donner vie à votre vision avec un artisanat de qualité.'}</p>
+                        </motion.div>
+                        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }} className="text-center">
+                            <div className="w-16 h-16 bg-yellow-green-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <Heart className="w-8 h-8 text-deep-space-blue-900" />
+                            </div>
+                            <h3 className="text-xl font-bold mb-2">{language === 'en' ? 'Customer First' : 'Le Client Avant Tout'}</h3>
+                            <p className="text-white/70">{language === 'en' ? 'We prioritize your satisfaction with transparent communication and reliable service.' : 'Nous privilégions votre satisfaction avec une communication transparente et un service fiable.'}</p>
+                        </motion.div>
                     </div>
                 </div>
             </section>
