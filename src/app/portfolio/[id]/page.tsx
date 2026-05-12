@@ -4,8 +4,9 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowLeft, MapPin, Calendar, Ruler, ArrowRight, Loader2 } from 'lucide-react'
+import { ArrowLeft, MapPin, Calendar, Ruler, ArrowRight, Loader2, ZoomIn } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
+import ImageLightbox from '@/components/ImageLightbox'
 
 interface BilingualField {
     en: string
@@ -46,6 +47,9 @@ export default function PortfolioDetailPage({ params }: { params: { id: string }
     const [project, setProject] = useState<Project | null>(null)
     const [relatedServices, setRelatedServices] = useState<Service[]>([])
     const [loading, setLoading] = useState(true)
+    const [lightboxOpen, setLightboxOpen] = useState(false)
+    const [lightboxIndex, setLightboxIndex] = useState(0)
+    const allImages = [mainImage, ...galleryImages]
 
     useEffect(() => {
         const fetchData = async () => {
@@ -85,6 +89,15 @@ export default function PortfolioDetailPage({ params }: { params: { id: string }
         if (Array.isArray(features)) return features
         return language === 'fr' ? (features.fr || []) : (features.en || [])
     }
+
+    const openLightbox = (index: number) => {
+        setLightboxIndex(index)
+        setLightboxOpen(true)
+    }
+
+    const closeLightbox = () => setLightboxOpen(false)
+    const prevImage = () => setLightboxIndex(prev => prev > 0 ? prev - 1 : allImages.length - 1)
+    const nextImage = () => setLightboxIndex(prev => prev < allImages.length - 1 ? prev + 1 : 0)
 
     if (loading) {
         return (
@@ -164,13 +177,16 @@ export default function PortfolioDetailPage({ params }: { params: { id: string }
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.6 }}
                             >
-                                <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-xl mb-8">
+                                <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-xl mb-8 group cursor-pointer" onClick={() => openLightbox(0)}>
                                     <Image
                                         src={mainImage}
                                         alt={title}
                                         fill
-                                        className="object-cover"
+                                        className="object-cover group-hover:scale-105 transition-transform duration-500"
                                     />
+                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                                        <ZoomIn className="w-10 h-10 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    </div>
                                 </div>
 
                                 <div className="mb-8">
@@ -201,13 +217,16 @@ export default function PortfolioDetailPage({ params }: { params: { id: string }
                                 {galleryImages.length > 0 && (
                                     <div className="grid grid-cols-3 gap-4 mt-8">
                                         {galleryImages.map((img, i) => (
-                                            <div key={i} className="relative h-48 rounded-xl overflow-hidden shadow-md">
+                                            <div key={i} className="relative h-48 rounded-xl overflow-hidden shadow-md group cursor-pointer" onClick={() => openLightbox(i + 1)}>
                                                 <Image
                                                     src={img}
                                                     alt={`${title} ${i + 1}`}
                                                     fill
-                                                    className="object-cover"
+                                                    className="object-cover group-hover:scale-105 transition-transform duration-300"
                                                 />
+                                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                                                    <ZoomIn className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                </div>
                                             </div>
                                         ))}
                                     </div>
@@ -315,6 +334,17 @@ export default function PortfolioDetailPage({ params }: { params: { id: string }
                     </div>
                 </div>
             </section>
+
+            {lightboxOpen && (
+                <ImageLightbox
+                    images={allImages}
+                    currentIndex={lightboxIndex}
+                    alt={title}
+                    onClose={closeLightbox}
+                    onPrev={prevImage}
+                    onNext={nextImage}
+                />
+            )}
         </div>
     )
 }

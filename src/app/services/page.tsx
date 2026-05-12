@@ -5,8 +5,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { ArrowRight, ChevronLeft, ChevronRight, CheckCircle, Phone, Mail, Loader2 } from 'lucide-react'
+import { ArrowRight, ChevronLeft, ChevronRight, CheckCircle, Phone, Mail, Loader2, ZoomIn } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
+import ImageLightbox from '@/components/ImageLightbox'
 
 interface Service {
     _id: string
@@ -32,6 +33,8 @@ function ServicesContent() {
     const [services, setServices] = useState<Service[]>([])
     const [projects, setProjects] = useState<Project[]>([])
     const [loading, setLoading] = useState(true)
+    const [lightboxOpen, setLightboxOpen] = useState(false)
+    const [lightboxIndex, setLightboxIndex] = useState(0)
 
     useEffect(() => {
         fetchData()
@@ -67,6 +70,14 @@ function ServicesContent() {
 
     const getServiceTitle = (title: string | { en: string; fr: string }) => typeof title === 'string' ? title : (language === 'fr' ? title.fr : title.en)
     const getServiceDesc = (desc: string | { en: string; fr: string }) => typeof desc === 'string' ? desc : (language === 'fr' ? desc.fr : desc.en)
+    
+    const openLightbox = (index: number) => {
+        setLightboxIndex(index)
+        setLightboxOpen(true)
+    }
+    const closeLightbox = () => setLightboxOpen(false)
+    const prevImage = () => setLightboxIndex(prev => prev > 0 ? prev - 1 : (activeService.images?.length || 1) - 1)
+    const nextImage = () => setLightboxIndex(prev => prev < (activeService.images?.length || 1) - 1 ? prev + 1 : 0)
 
     if (loading) {
         return (
@@ -167,15 +178,21 @@ function ServicesContent() {
                                         animate={{ opacity: 1, x: 0 }}
                                         exit={{ opacity: 0, x: 50 }}
                                         transition={{ duration: 0.5 }}
-                                        className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl"
+                                        className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl group cursor-pointer"
+                                        onClick={() => activeService.images?.length && openLightbox(0)}
                                     >
                                         <Image
                                             src={activeService.images?.[0] || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&h=800&fit=crop'}
                                             alt={serviceTitle}
                                             fill
-                                            className="object-cover"
+                                            className="object-cover group-hover:scale-105 transition-transform duration-500"
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+                                        {activeService.images?.length > 0 && (
+                                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                                                <ZoomIn className="w-12 h-12 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                                            </div>
+                                        )}
                                         <div className="absolute bottom-6 left-6">
                                             <div className="w-16 h-16 bg-yellow-green-500 rounded-2xl flex items-center justify-center shadow-lg">
                                                 <span className="text-deep-space-blue-600 font-bold text-2xl">{serviceTitle.charAt(0)}</span>
@@ -323,6 +340,17 @@ function ServicesContent() {
                     </div>
                 </div>
             </section>
+
+            {lightboxOpen && activeService.images && (
+                <ImageLightbox
+                    images={activeService.images}
+                    currentIndex={lightboxIndex}
+                    alt={serviceTitle}
+                    onClose={closeLightbox}
+                    onPrev={prevImage}
+                    onNext={nextImage}
+                />
+            )}
         </div>
     )
 }
