@@ -79,8 +79,8 @@ export default function Navigation() {
 
     return (
         <>
-            <nav className={`fixed top-0 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ${getNavClasses()} ${isScrolledOrNonHome ? 'w-full max-w-5xl' : 'w-full max-w-6xl'}`} style={{ borderRadius: '0 0 9999px 9999px' }}>
-                <div className="max-w-7xl mx-auto px-4 py-3">
+            <nav className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ${getNavClasses()} ${isScrolledOrNonHome ? 'w-[calc(100%-2rem)] max-w-5xl' : 'w-[calc(100%-4rem)] max-w-6xl'}`} style={{ borderRadius: '9999px' }}>
+                <div className="max-w-7xl mx-auto px-2 py-2">
                     <div className="flex items-center justify-between">
                         <Link href="/" className="pl-2">
                             <Image src={logo} alt="MEDCon SARL" width={140} height={56} className="h-14 w-auto" />
