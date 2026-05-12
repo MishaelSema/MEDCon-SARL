@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Check, X, Star, Loader2, Plus, Pencil, Trash2, X as XIcon } from 'lucide-react'
+import { Check, X, Star, Loader2, Plus, X as XIcon } from 'lucide-react'
 
 interface Testimonial {
     _id: string
@@ -65,7 +65,7 @@ export default function TestimonialsPage() {
 
     const deleteTestimonial = async (id: string) => {
         if (!confirm('Are you sure you want to delete this testimonial?')) return
-        
+
         try {
             const token = localStorage.getItem('admin-token')
             const res = await fetch(`/api/admin/testimonials?id=${id}`, {
@@ -93,7 +93,7 @@ export default function TestimonialsPage() {
 
     const handleSave = async () => {
         if (!formData.name || !formData.email || !formData.text) return
-        
+
         setSaving(true)
         try {
             const token = localStorage.getItem('admin-token')
@@ -102,7 +102,7 @@ export default function TestimonialsPage() {
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
                 body: JSON.stringify({ ...formData, status: 'approved' })
             })
-            
+
             if (res.ok) {
                 await fetchTestimonials()
                 setShowModal(false)
@@ -115,13 +115,15 @@ export default function TestimonialsPage() {
         }
     }
 
-    const renderStars = (rating: number) => (
-        <div className="flex gap-0.5">
-            {[1, 2, 3, 4, 5].map((i) => (
-                <Star key={i} className={`w-4 h-4 ${i <= rating ? 'text-yellow-green-500 fill-yellow-green-500' : 'text-gray-300'}`} />
-            ))}
-        </div>
-    )
+    const renderStars = (rating: number) => {
+        return (
+            <div className="flex gap-0.5">
+                {[1, 2, 3, 4, 5].map((i) => (
+                    <Star key={i} className={`w-4 h-4 ${i <= rating ? 'text-yellow-green-500 fill-yellow-green-500' : 'text-gray-300'}`} />
+                ))}
+            </div>
+        )
+    }
 
     const pending = testimonials.filter(t => t.status === 'pending')
     const approved = testimonials.filter(t => t.status === 'approved')
@@ -222,14 +224,17 @@ export default function TestimonialsPage() {
                                         )}
                                     </div>
                                 </div>
-</div>
-            )}
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
 
             {showModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
                     <div className="bg-white rounded-3xl w-full max-w-md">
                         <div className="flex items-center justify-between p-6 border-b">
-                            <h2 className="text-xl font-bold text-gray-900">{editingTestimonial ? 'Edit Testimonial' : 'Add Testimonial'}</h2>
+                            <h2 className="text-xl font-bold text-gray-900">Add Testimonial</h2>
                             <button onClick={() => setShowModal(false)} className="p-2 hover:bg-gray-100 rounded-full"><XIcon className="w-5 h-5" /></button>
                         </div>
                         <div className="p-6 space-y-4">
