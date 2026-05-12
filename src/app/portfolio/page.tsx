@@ -18,27 +18,39 @@ interface Project {
     year: string
     area?: string
     description: string | { en: string; fr: string }
+    serviceIds?: string[]
+}
+
+interface Service {
+    _id: string
+    title: string | { en: string; fr: string }
 }
 
 export default function PortfolioPage() {
     const { t, language } = useLanguage()
     const [activeFilter, setActiveFilter] = useState('all')
     const [projects, setProjects] = useState<Project[]>([])
+    const [services, setServices] = useState<Service[]>([])
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        fetchProjects()
+        fetchData()
     }, [])
 
-    const fetchProjects = async () => {
+    const fetchData = async () => {
         try {
-            const res = await fetch('/api/admin/projects')
-            if (res.ok) {
-                const data = await res.json()
-                setProjects(data)
+            const [projectsRes, servicesRes] = await Promise.all([
+                fetch('/api/admin/projects'),
+                fetch('/api/admin/services')
+            ])
+            if (projectsRes.ok) {
+                setProjects(await projectsRes.json())
+            }
+            if (servicesRes.ok) {
+                setServices(await servicesRes.json())
             }
         } catch (error) {
-            console.error('Error fetching projects:', error)
+            console.error('Error fetching data:', error)
         } finally {
             setLoading(false)
         }
@@ -49,16 +61,18 @@ export default function PortfolioPage() {
         return language === 'fr' ? (text.fr || text.en) : (text.en || text)
     }
 
-    const filters = [
-        { key: 'all', label: t('portfolio.all') },
-        { key: 'New Construction', label: language === 'en' ? 'New Construction' : 'Neuf' },
-        { key: 'Renovation', label: language === 'en' ? 'Renovation' : 'Rénovation' },
-        { key: 'Interior Design', label: language === 'en' ? 'Interior Design' : 'Design Intérieur' },
-    ]
+    const getServiceTitle = (service: Service) => getLocalizedText(service.title)
 
     const filteredProjects = activeFilter === 'all'
         ? projects
-        : projects.filter(p => p.scope === activeFilter)
+        : projects.filter(p => {
+            // Check serviceIds first (new projects)
+            if (p.serviceIds?.length) {
+                return p.serviceIds.includes(activeFilter)
+            }
+            // Fallback to scope (existing projects)
+            return p.scope === activeFilter
+        })
 
     if (loading) {
         return (
@@ -100,17 +114,27 @@ export default function PortfolioPage() {
             <section className="py-12 bg-cornsilk-50">
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="flex flex-wrap justify-center gap-4">
-                        {filters.map((filter) => (
+                        <button
+                            onClick={() => setActiveFilter('all')}
+                            className={`px-6 py-3 rounded-full font-medium transition-all ${
+                                activeFilter === 'all'
+                                    ? 'bg-deep-space-blue-600 text-white'
+                                    : 'bg-white text-gray-700 hover:bg-deep-space-blue-50'
+                            }`}
+                        >
+                            {t('portfolio.all')}
+                        </button>
+                        {services.map((service) => (
                             <button
-                                key={filter.key}
-                                onClick={() => setActiveFilter(filter.key)}
+                                key={service._id}
+                                onClick={() => setActiveFilter(service._id)}
                                 className={`px-6 py-3 rounded-full font-medium transition-all ${
-                                    activeFilter === filter.key
+                                    activeFilter === service._id
                                         ? 'bg-deep-space-blue-600 text-white'
                                         : 'bg-white text-gray-700 hover:bg-deep-space-blue-50'
                                 }`}
                             >
-                                {filter.label}
+                                {getServiceTitle(service)}
                             </button>
                         ))}
                     </div>
@@ -147,7 +171,9 @@ export default function PortfolioPage() {
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                             <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-full group-hover:translate-y-0 transition-transform">
                                                 <span className="inline-block px-3 py-1 bg-yellow-green-500 text-deep-space-blue-600 text-sm font-bold rounded-full mb-2">
-                                                    {project.scope}
+                                                    {p.serviceIds?.length 
+                                                        ? getServiceTitle(services.find(s => s._id === p.serviceIds?.[0]) || { _id: '', title: p.scope } as Service)
+                                                        : p.scope}
                                                 </span>
                                                 <div className="flex items-center justify-between">
                                                     <span className="text-white text-sm">{project.location}</span>
