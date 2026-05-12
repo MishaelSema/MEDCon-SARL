@@ -144,6 +144,13 @@ export default function HomePage() {
         return ''
     }
 
+    const getServiceGridClass = (index: number, total: number) => {
+        if (total <= 2) return 'md:col-span-6'
+        if (total === 3 && index === 0) return 'md:col-span-12'
+        if (total === 4 && index < 2) return 'md:col-span-6'
+        return 'md:col-span-4'
+    }
+
     const stats = [
         { icon: Building2, value: '50+', label: t('home.projects') },
         { icon: Phone, value: '40+', label: t('home.clients') },
