@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
@@ -10,11 +10,21 @@ import { useLanguage } from '@/context/LanguageContext'
 import logo from '@/assets/MEDConSARL_logo.png'
 
 export default function Navigation() {
+    const [isScrolled, setIsScrolled] = useState(false)
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const pathname = usePathname()
     const { language, setLanguage, t } = useLanguage()
 
     const isHomePage = pathname === '/'
+    const isScrolledOrNonHome = !isHomePage || isScrolled
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 50)
+        }
+        window.addEventListener('scroll', handleScroll)
+        return () => window.removeEventListener('scroll', handleScroll)
+    }, [])
 
     const navLinks = [
         { name: 'home', href: '/' },
@@ -23,8 +33,6 @@ export default function Navigation() {
         { name: 'portfolio', href: '/portfolio' },
         { name: 'contact', href: '/contact' },
     ]
-
-    const isScrolledOrNonHome = !isHomePage
 
     const getNavClasses = () => {
         if (mobileMenuOpen) return 'bg-deep-space-blue-800 text-white'
