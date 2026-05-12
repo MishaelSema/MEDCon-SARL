@@ -238,76 +238,51 @@ export default function ServicesPage() {
                     </button>
                 </div>
             ) : (
-                <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Order</th>
-                                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Service</th>
-                                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Features</th>
-                                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Images</th>
-                                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Show on Home</th>
-                                    <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-100">
-                                {services.sort((a, b) => a.order - b.order).map((service) => (
-                                    <tr key={service._id} className="hover:bg-gray-50">
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-2">
-                                                <GripVertical className="w-4 h-4 text-gray-400 cursor-grab" />
-                                                <span className="font-bold text-gray-900">{service.order}</span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-4">
-                                                <div className="relative w-12 h-12 bg-deep-space-blue-50 rounded-xl overflow-hidden flex items-center justify-center">
-                                                    {service.images?.[0] ? (
-                                                        <Image src={service.images[0]} alt={getTitle(service.title)} fill className="object-cover" />
-                                                    ) : (
-                                                        <span className="text-xs text-gray-400">No img</span>
-                                                    )}
-                                                </div>
-                                                <div>
-                                                    <h3 className="font-bold text-gray-900">{getTitle(service.title)}</h3>
-                                                    <p className="text-sm text-gray-500 max-w-xs truncate">{getDescription(service.description)}</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex flex-wrap gap-1">
-                                                {service.features?.slice(0, 2).map((f, i) => (
-                                                    <span key={i} className="px-2 py-0.5 bg-deep-space-blue-50 text-deep-space-blue-700 text-xs rounded-full">{f}</span>
-                                                ))}
-                                                {service.features?.length > 2 && <span className="text-xs text-gray-400">+{service.features.length - 2} more</span>}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className="px-3 py-1 bg-gray-100 text-gray-700 text-sm font-medium rounded-full">{service.images?.length || 0} image(s)</span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {service.showOnHome ? (
-                                                <span className="flex items-center gap-1 text-green-600"><Eye className="w-4 h-4" /> Visible</span>
-                                            ) : (
-                                                <span className="flex items-center gap-1 text-gray-400"><EyeOff className="w-4 h-4" /> Hidden</span>
-                                            )}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center justify-end gap-2">
-                                                <button onClick={() => handleOpenModal(service)} className="p-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
-                                                    <Pencil className="w-4 h-4" />
-                                                </button>
-                                                <button onClick={() => service._id && handleDelete(service._id)} className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100">
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {services.sort((a, b) => a.order - b.order).map((service) => (
+                        <div key={service._id} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                            <div className="flex items-start gap-4 mb-4">
+                                <div className="relative w-14 h-14 bg-deep-space-blue-50 rounded-xl overflow-hidden flex-shrink-0">
+                                    {service.images?.[0] ? (
+                                        <Image src={service.images[0]} alt={getTitle(service.title)} fill className="object-cover" />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-xs text-gray-400">No img</div>
+                                    )}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="font-bold text-gray-900 truncate">{getTitle(service.title)}</h3>
+                                    <p className="text-sm text-gray-500 line-clamp-2 mt-1">{getDescription(service.description)}</p>
+                                </div>
+                            </div>
+                            
+                            <div className="flex flex-wrap gap-1 mb-4">
+                                {service.features?.slice(0, 3).map((f, i) => (
+                                    <span key={i} className="px-2 py-0.5 bg-deep-space-blue-50 text-deep-space-blue-700 text-xs rounded-full">{f}</span>
                                 ))}
-                            </tbody>
-                        </table>
-                    </div>
+                                {service.features?.length > 3 && <span className="text-xs text-gray-400">+{service.features.length - 3}</span>}
+                            </div>
+                            
+                            <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                                <div className="flex items-center gap-3">
+                                    <span className="text-xs text-gray-400">#{service.order}</span>
+                                    {service.showOnHome ? (
+                                        <span className="flex items-center gap-1 text-green-600 text-xs"><Eye className="w-3 h-3" /> Visible</span>
+                                    ) : (
+                                        <span className="flex items-center gap-1 text-gray-400 text-xs"><EyeOff className="w-3 h-3" /> Hidden</span>
+                                    )}
+                                    <span className="text-xs text-gray-400">{service.images?.length || 0} imgs</span>
+                                </div>
+                                <div className="flex gap-1">
+                                    <button onClick={() => handleOpenModal(service)} className="p-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
+                                        <Pencil className="w-4 h-4" />
+                                    </button>
+                                    <button onClick={() => service._id && handleDelete(service._id)} className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100">
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             )}
 

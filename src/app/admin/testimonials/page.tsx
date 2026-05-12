@@ -145,56 +145,42 @@ export default function TestimonialsPage() {
                         <p className="text-gray-500">No testimonials yet.</p>
                     </div>
                 ) : (
-                    <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-                        <div className="overflow-x-auto">
-                            <table className="w-full">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Client</th>
-                                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Rating</th>
-                                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Review</th>
-                                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Status</th>
-                                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-100">
-                                    {testimonials.map((t) => (
-                                        <tr key={t._id} className="hover:bg-gray-50">
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 bg-deep-space-blue-100 rounded-full flex items-center justify-center text-deep-space-blue-600 font-bold">{t.name.charAt(0)}</div>
-                                                    <div>
-                                                        <h3 className="font-bold text-gray-900">{t.name}</h3>
-                                                        <p className="text-sm text-gray-500">{t.email}</p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">{renderStars(t.rating)}</td>
-                                            <td className="px-6 py-4"><p className="text-sm text-gray-600 max-w-xs truncate">{t.content || t.text}</p></td>
-                                            <td className="px-6 py-4">
-                                                {t.status === 'approved' ? (
-                                                    <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full flex items-center gap-1 w-fit"><Check className="w-3 h-3" /> Approved</span>
-                                                ) : t.status === 'pending' ? (
-                                                    <span className="px-3 py-1 bg-yellow-green-100 text-yellow-green-700 text-sm font-medium rounded-full w-fit">Pending</span>
-                                                ) : (
-                                                    <span className="px-3 py-1 bg-red-100 text-red-700 text-sm font-medium rounded-full w-fit">Rejected</span>
-                                                )}
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex gap-2">
-                                                    {t.status !== 'approved' && (
-                                                        <button onClick={() => updateStatus(t._id, 'approved')} className="p-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100"><Check className="w-4 h-4" /></button>
-                                                    )}
-                                                    {t.status !== 'rejected' && (
-                                                        <button onClick={() => updateStatus(t._id, 'rejected')} className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100"><X className="w-4 h-4" /></button>
-                                                    )}
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {testimonials.map((t) => (
+                            <div key={t._id} className={`bg-white rounded-2xl p-5 shadow-sm border-l-4 ${t.status === 'approved' ? 'border-green-500' : t.status === 'pending' ? 'border-yellow-green-400' : 'border-red-500'}`}>
+                                <div className="flex items-start justify-between mb-3">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 bg-deep-space-blue-100 rounded-full flex items-center justify-center text-deep-space-blue-600 font-bold">{t.name.charAt(0)}</div>
+                                        <div>
+                                            <h3 className="font-bold text-gray-900">{t.name}</h3>
+                                            <p className="text-xs text-gray-500">{t.email}</p>
+                                        </div>
+                                    </div>
+                                    {renderStars(t.rating)}
+                                </div>
+                                <p className="text-sm text-gray-600 line-clamp-3 mb-3">"{t.content || t.text}"</p>
+                                <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                                    <div className="flex items-center gap-2">
+                                        {t.status === 'approved' ? (
+                                            <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">Approved</span>
+                                        ) : t.status === 'pending' ? (
+                                            <span className="px-2 py-1 bg-yellow-green-100 text-yellow-green-700 text-xs font-medium rounded-full">Pending</span>
+                                        ) : (
+                                            <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-full">Rejected</span>
+                                        )}
+                                        <span className="text-xs text-gray-400">{new Date(t.createdAt).toLocaleDateString()}</span>
+                                    </div>
+                                    <div className="flex gap-1">
+                                        {t.status !== 'approved' && (
+                                            <button onClick={() => updateStatus(t._id, 'approved')} className="p-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100"><Check className="w-4 h-4" /></button>
+                                        )}
+                                        {t.status !== 'rejected' && (
+                                            <button onClick={() => updateStatus(t._id, 'rejected')} className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100"><X className="w-4 h-4" /></button>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 )}
             </div>

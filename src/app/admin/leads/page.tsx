@@ -163,67 +163,48 @@ export default function LeadsPage() {
             )}
 
             <div className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
-                <div className="flex items-center gap-4 mb-4">
-                    <div className="w-12 h-12 bg-deep-space-blue-100 rounded-full flex items-center justify-center">
-                        <Users className="w-6 h-6 text-deep-space-blue-600" />
+                <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 bg-deep-space-blue-100 rounded-full flex items-center justify-center">
+                        <Users className="w-7 h-7 text-deep-space-blue-600" />
                     </div>
                     <div>
-                        <h2 className="text-2xl font-bold text-gray-900">{leads.length}</h2>
+                        <h2 className="text-3xl font-bold text-gray-900">{leads.length}</h2>
                         <p className="text-sm text-gray-500">Total Leads</p>
                     </div>
                 </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full">
-                        <thead className="bg-gray-50">
-                            <tr>
-                                <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Name</th>
-                                <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Email</th>
-                                <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Source</th>
-                                <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Date</th>
-                                <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100">
-                            {leads.length === 0 ? (
-                                <tr>
-                                    <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
-                                        No leads yet. Share the guide to get subscribers!
-                                    </td>
-                                </tr>
-                            ) : (
-                                leads.map((lead) => (
-                                    <tr key={lead._id} className="hover:bg-gray-50">
-                                        <td className="px-6 py-4 font-medium text-gray-900">{lead.name}</td>
-                                        <td className="px-6 py-4">
-                                            <a href={`mailto:${lead.email}`} className="text-deep-space-blue-600 hover:underline flex items-center gap-1">
-                                                <Mail className="w-4 h-4" /> {lead.email}
-                                            </a>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className="px-3 py-1 bg-deep-space-blue-50 text-deep-space-blue-700 text-sm rounded-full">
-                                                {lead.source === 'construction-guide' ? 'Guide' : lead.source}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 text-gray-500 text-sm">
-                                            {new Date(lead.createdAt).toLocaleDateString()}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <a 
-                                                href={`mailto:${lead.email}`} 
-                                                className="p-2 bg-deep-space-blue-50 text-deep-space-blue-600 rounded-lg hover:bg-deep-space-blue-100 inline-flex"
-                                            >
-                                                <Mail className="w-4 h-4" />
-                                            </a>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {leads.length === 0 ? (
+                    <div className="col-span-full bg-white rounded-2xl p-12 text-center shadow-sm">
+                        <p className="text-gray-500">No leads yet. Share the guide to get subscribers!</p>
+                    </div>
+                ) : (
+                    leads.map((lead) => (
+                        <div key={lead._id} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                            <div className="flex items-start gap-3 mb-3">
+                                <div className="w-10 h-10 bg-deep-space-blue-100 rounded-full flex items-center justify-center text-deep-space-blue-600 font-bold text-sm">
+                                    {lead.name.charAt(0)}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="font-bold text-gray-900 truncate">{lead.name}</h3>
+                                    <a href={`mailto:${lead.email}`} className="text-sm text-deep-space-blue-600 hover:underline truncate block">{lead.email}</a>
+                                </div>
+                            </div>
+                            <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                                <div className="flex items-center gap-2">
+                                    <span className="px-2 py-1 bg-deep-space-blue-50 text-deep-space-blue-700 text-xs rounded-full">
+                                        {lead.source === 'construction-guide' ? 'Guide' : lead.source}
+                                    </span>
+                                    <span className="text-xs text-gray-400">{new Date(lead.createdAt).toLocaleDateString()}</span>
+                                </div>
+                                <a href={`mailto:${lead.email}`} className="p-2 bg-deep-space-blue-50 text-deep-space-blue-600 rounded-lg hover:bg-deep-space-blue-100">
+                                    <Mail className="w-4 h-4" />
+                                </a>
+                            </div>
+                        </div>
+                    ))
+                )}
             </div>
         </div>
     )
