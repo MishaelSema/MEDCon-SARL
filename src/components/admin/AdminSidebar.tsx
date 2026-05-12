@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
@@ -27,6 +27,18 @@ export default function AdminSidebar({ stats }: AdminSidebarProps) {
     const pathname = usePathname()
     const router = useRouter()
     const [sidebarOpen, setSidebarOpen] = useState(false)
+    const [daysLeft, setDaysLeft] = useState<number | null>(null)
+
+    useEffect(() => {
+        const loginTime = localStorage.getItem('admin-login-time')
+        if (loginTime) {
+            const expiresIn = 30 * 24 * 60 * 60 * 1000
+            const elapsed = Date.now() - parseInt(loginTime)
+            const remaining = expiresIn - elapsed
+            const days = Math.max(0, Math.ceil(remaining / (24 * 60 * 60 * 1000)))
+            setDaysLeft(days)
+        }
+    }, [])
 
     const handleLogout = () => {
         localStorage.removeItem('admin-token')
@@ -91,7 +103,9 @@ export default function AdminSidebar({ stats }: AdminSidebarProps) {
                             <Clock className="w-3 h-3" />
                             Session expires in
                         </div>
-                        <p className="font-bold text-yellow-green-400">30 days</p>
+                        <p className="font-bold text-yellow-green-400">
+                            {daysLeft !== null ? `${daysLeft} days` : '...'}
+                        </p>
                     </div>
                 </div>
             </aside>
