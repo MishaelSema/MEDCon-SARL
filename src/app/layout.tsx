@@ -99,7 +99,7 @@ export default function RootLayout({
         <LanguageProvider>
           <StructuredData />
           <Navigation />
-          <main className="min-h-screen pt-20">{children}</main>
+          <main className="min-h-screen">{children}</main>
           <Footer />
           <WhatsAppButton />
           <NewsletterPopup />

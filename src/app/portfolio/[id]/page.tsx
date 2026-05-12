@@ -192,7 +192,7 @@ export default function PortfolioDetailPage({ params }: { params: { id: string }
 
     if (!project) {
         return (
-            <div className="min-h-screen pt-16 flex items-center justify-center">
+            <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
                     <h1 className="text-4xl font-bold text-gray-900 mb-4">Project Not Found</h1>
                     <Link href="/portfolio" className="text-deep-space-blue-600 hover:underline">
@@ -204,7 +204,7 @@ export default function PortfolioDetailPage({ params }: { params: { id: string }
     }
 
     return (
-        <div className="min-h-screen pt-16">
+        <div className="min-h-screen">
             <section className="relative h-[50vh] overflow-hidden">
                 <Image
                     src={project.image}
