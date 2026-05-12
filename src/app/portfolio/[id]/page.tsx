@@ -55,9 +55,8 @@ export default function PortfolioDetailPage({ params }: { params: { id: string }
     }, [id])
 
     const getLocalizedText = (text: string | BilingualField): string => {
-        if (!text) return ''
-        if (typeof text === 'string') return text
-        return language === 'fr' ? (text.fr || text.en) : (text.en || text)
+        if (typeof text !== 'object' || text === null) return String(text || '')
+        return language === 'fr' ? (text.fr || text.en || '') : (text.en || '')
     }
 
     const getLocalizedFeatures = (features: string[] | FeaturesBilingual): string[] => {

@@ -71,9 +71,9 @@ export default function PortfolioPage() {
         }
     }
 
-    const getLocalizedText = (text: string | BilingualField) => {
+    const getLocalizedText = (text: string | BilingualField): string => {
         if (typeof text === 'string') return text
-        return language === 'fr' ? (text.fr || text.en) : (text.en || text)
+        return language === 'fr' ? (text.fr || text.en) : (text.en || '')
     }
 
     const getLocalizedTitle = (project: Project) => getLocalizedText(project.title as string | BilingualField)
@@ -282,7 +282,7 @@ export default function PortfolioPage() {
                         <div key={project._id} className="bg-white rounded-2xl overflow-hidden shadow-sm">
                             <div className="relative h-48">
                                 {project.mainImage && (
-                                    <Image src={project.mainImage} alt={getLocalizedTitle(project)} fill className="object-cover" />
+                                    <Image src={project.mainImage} alt={String(getLocalizedTitle(project))} fill className="object-cover" />
                                 )}
                                 <span className="absolute top-3 left-3 px-3 py-1 bg-deep-space-blue-600 text-white text-xs font-bold rounded-full">{project.scope}</span>
                             </div>
