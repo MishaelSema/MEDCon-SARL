@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sendEmail } from '@/lib/nodemailer'
-import { contactNotificationEmail, thankYouEmail } from '@/lib/email-templates'
+import { contactNotificationEmail, thankYouEmail, contactReplyEmail } from '@/lib/email-templates'
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'medconsarl@gmail.com'
 
@@ -91,14 +91,12 @@ export async function PATCH(request: NextRequest) {
                 await sendEmail({
                     to: contact.email,
                     subject: `Re: Your inquiry to MEDCon SARL`,
-                    html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                        <h2 style="color: #073856;">MEDCon SARL - Reply to your inquiry</h2>
-                        <p>Dear ${contact.name},</p>
-                        <div style="background: #f9f9f9; padding: 20px; border-radius: 10px; margin: 20px 0;">
-                            <p style="white-space: pre-wrap;">${reply}</p>
-                        </div>
-                        <p>Best regards,<br/><strong>MEDCon SARL</strong><br/>Yaoundé, Cameroon<br/>+237 671 911 489</p>
-                    </div>`,
+                    html: contactReplyEmail({
+                        customerName: contact.name,
+                        customerEmail: contact.email,
+                        reply: reply,
+                        originalMessage: contact.message
+                    }),
                 })
             }
         }

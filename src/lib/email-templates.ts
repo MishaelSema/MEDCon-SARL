@@ -395,3 +395,92 @@ export const leadNotificationEmail = (data: {
         </p>
     `)
 }
+
+// Admin Reply to Contact Message
+export const contactReplyEmail = (data: {
+    customerName: string
+    customerEmail: string
+    reply: string
+    originalMessage?: string
+}) => {
+    const content = `
+        <div style="text-align: center; margin-bottom: 30px;">
+            <div style="width: 80px; height: 80px; background-color: ${COLORS.yellowGreen}; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="${COLORS.deepSpaceBlue}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+            </div>
+            <h2 style="color: ${COLORS.deepSpaceBlue}; font-size: 26px; margin: 0 0 10px;">
+                Reply from MEDCon SARL
+            </h2>
+            <p style="color: ${COLORS.gray[500]}; font-size: 15px; margin: 0;">
+                We have responded to your inquiry
+            </p>
+        </div>
+        
+        <div style="background-color: ${COLORS.gray[50]}; border-radius: 12px; padding: 25px; margin-bottom: 25px;">
+            <p style="color: ${COLORS.gray[600]}; font-size: 14px; margin: 0 0 15px;">
+                Dear <strong style="color: ${COLORS.deepSpaceBlue};">${data.customerName}</strong>,
+            </p>
+            <p style="color: ${COLORS.gray[600]}; font-size: 14px; line-height: 1.7; margin: 0;">
+                Thank you for reaching out to us. Here is our response to your inquiry:
+            </p>
+        </div>
+        
+        ${data.originalMessage ? `
+        <div style="background-color: ${COLORS.cornsilk}; border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 4px solid ${COLORS.yellowGreen};">
+            <p style="color: ${COLORS.gray[500]}; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 8px;">Your Original Message</p>
+            <p style="color: ${COLORS.gray[700]}; font-size: 14px; line-height: 1.6; margin: 0; font-style: italic;">
+                "${data.originalMessage}"
+            </p>
+        </div>
+        ` : ''}
+        
+        <div style="background: linear-gradient(135deg, ${COLORS.deepSpaceBlue} 0%, ${COLORS.deepSpaceBlueLight} 100%); border-radius: 16px; padding: 30px; margin-bottom: 25px; position: relative;">
+            <div style="position: absolute; top: 15px; right: 20px; font-size: 40px; color: rgba(255,255,255,0.1);">MEDCon</div>
+            <p style="color: ${COLORS.white}; font-size: 16px; line-height: 1.8; margin: 0; position: relative; z-index: 1; white-space: pre-wrap;">${data.reply}</p>
+        </div>
+        
+        <div style="background-color: ${COLORS.gray[50]}; border-radius: 12px; padding: 25px; margin-bottom: 25px;">
+            <p style="color: ${COLORS.deepSpaceBlue}; font-size: 14px; font-weight: 600; margin: 0 0 15px;">
+                Need more help?
+            </p>
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td style="padding: 8px 0;">
+                        <a href="tel:+237671911489" style="display: inline-flex; align-items: center; gap: 8px; color: ${COLORS.deepSpaceBlue}; text-decoration: none; font-size: 14px; font-weight: 500;">
+                            <span style="background-color: ${COLORS.yellowGreen}; color: ${COLORS.deepSpaceBlue}; padding: 8px; border-radius: 50%;">📞</span>
+                            +237 671 911 489
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px 0;">
+                        <a href="mailto:medconsarl@gmail.com" style="display: inline-flex; align-items: center; gap: 8px; color: ${COLORS.deepSpaceBlue}; text-decoration: none; font-size: 14px; font-weight: 500;">
+                            <span style="background-color: ${COLORS.yellowGreen}; color: ${COLORS.deepSpaceBlue}; padding: 8px; border-radius: 50%;">✉️</span>
+                            medconsarl@gmail.com
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px 0;">
+                        <a href="https://med-con-sarl.vercel.app/contact" style="display: inline-flex; align-items: center; gap: 8px; color: ${COLORS.deepSpaceBlue}; text-decoration: none; font-size: 14px; font-weight: 500;">
+                            <span style="background-color: ${COLORS.yellowGreen}; color: ${COLORS.deepSpaceBlue}; padding: 8px; border-radius: 50%;">🌐</span>
+                            Visit Our Website
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        
+        <div style="text-align: center; padding: 20px 0; border-top: 1px solid ${COLORS.gray[200]};">
+            <p style="color: ${COLORS.gray[500]}; font-size: 13px; margin: 0;">
+                Best regards,<br>
+                <strong style="color: ${COLORS.deepSpaceBlue};">The MEDCon SARL Team</strong><br>
+                Building Tomorrow's Dreams Today
+            </p>
+        </div>
+    `
+    
+    return BASE_TEMPLATE(content)
+}
