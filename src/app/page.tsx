@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { 
     ArrowRight, Building2, Home, Wrench, DollarSign, Palette,
-    MapPin, FileText, Lightbulb, Phone, Star, ShieldCheck, X, Loader2, CheckCircle,
+    MapPin, FileText, Lightbulb, Phone, Star, ShieldCheck, X, CheckCircle,
     Award, Users, Heart
 } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
@@ -39,7 +39,8 @@ export default function HomePage() {
     const [rating, setRating] = useState(5)
     const [featuredProjects, setFeaturedProjects] = useState<Project[]>([])
     const [reviews, setReviews] = useState<Testimonial[]>([])
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
+    const [dataLoaded, setDataLoaded] = useState(false)
     const [guide, setGuide] = useState<GuideSettings>({
         title: 'Get the Construction Guide for Free',
         description: 'Discover everything you need to know before starting your construction project.',
@@ -51,11 +52,13 @@ export default function HomePage() {
     const { register, handleSubmit, reset, formState: { errors } } = useForm()
 
     useEffect(() => {
-        fetchData()
         const savedGuide = localStorage.getItem('guideSettings')
         if (savedGuide) {
             setGuide(JSON.parse(savedGuide))
         }
+        setDataLoaded(true)
+        
+        fetchData()
     }, [])
 
     const fetchData = async () => {
@@ -76,8 +79,6 @@ export default function HomePage() {
             }
         } catch (error) {
             console.error('Error fetching data:', error)
-        } finally {
-            setLoading(false)
         }
     }
 
@@ -156,17 +157,9 @@ export default function HomePage() {
         }
     }
 
-    if (loading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <Loader2 className="w-8 h-8 animate-spin text-deep-space-blue-600" />
-            </div>
-        )
-    }
-
     return (
         <div className="min-h-screen">
-            <section className="relative h-screen flex items-center justify-center overflow-hidden">
+            <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
                 <div className="absolute inset-0 z-0">
                     <Image src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1920&h=1080&fit=crop" alt="Hero" fill className="object-cover brightness-75" priority />
                     <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/60"></div>
@@ -175,7 +168,7 @@ export default function HomePage() {
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
                     <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
                         <span className="text-yellow-green-400 font-bold tracking-[0.3em] uppercase text-sm mb-6 block">{t('hero.tagline')}</span>
-                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8 pt-24">
+                        <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8 pt-16 sm:pt-24">
                             {t('hero.title')}<br />
                             <span className="relative inline-block mt-2">
                                 <span className="relative z-10 text-gray-900">{t('hero.titleAccent')}</span>
@@ -186,12 +179,12 @@ export default function HomePage() {
                                 </svg>
                             </span>
                         </h1>
-                        <p className="text-xl md:text-2xl text-gray-200 mb-10 max-w-3xl mx-auto font-light leading-relaxed">{t('hero.description')}</p>
-                        <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-                            <Link href="/portfolio" className="px-8 py-4 bg-deep-space-blue-600 text-white font-bold rounded-full hover:bg-deep-space-blue-700 transition-all flex items-center gap-2">
+                        <p className="text-lg sm:text-xl md:text-2xl text-gray-200 mb-10 max-w-3xl mx-auto font-light leading-relaxed">{t('hero.description')}</p>
+                        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
+                            <Link href="/portfolio" className="px-6 sm:px-8 py-3 sm:py-4 bg-deep-space-blue-600 text-white font-bold rounded-full hover:bg-deep-space-blue-700 transition-all flex items-center gap-2">
                                 {t('hero.viewProjects')} <ArrowRight className="w-4 h-4" />
                             </Link>
-                            <Link href="/contact" className="px-8 py-4 rounded-full border border-white/30 bg-black/20 backdrop-blur hover:bg-black/40 transition-all text-white font-semibold">
+                            <Link href="/contact" className="px-6 sm:px-8 py-3 sm:py-4 rounded-full border border-white/30 bg-black/20 backdrop-blur hover:bg-black/40 transition-all text-white font-semibold">
                                 {t('hero.talkExpert')}
                             </Link>
                         </div>
@@ -200,27 +193,27 @@ export default function HomePage() {
             </section>
 
             {guide.enabled && (
-                <section className="py-16 bg-deep-space-blue-600 relative overflow-hidden">
+                <section className="py-12 md:py-16 bg-deep-space-blue-600 relative overflow-hidden">
                     <div className="absolute inset-0 opacity-10">
                         <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
                         <div className="absolute bottom-0 right-0 w-96 h-96 bg-yellow-green-400 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
                     </div>
                     
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
                             <div className="text-white">
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                 >
-                                    <h2 className="text-3xl md:text-4xl font-bold mb-4">{guide.title}</h2>
-                                    <p className="text-lg text-white/80 mb-6">{guide.description}</p>
-                                    <ul className="space-y-3">
+                                    <h2 className="text-2xl md:text-4xl font-bold mb-3 md:mb-4">{guide.title}</h2>
+                                    <p className="text-base md:text-lg text-white/80 mb-4 md:mb-6">{guide.description}</p>
+                                    <ul className="space-y-2 md:space-y-3">
                                         {guideBenefits.map((benefit, i) => (
                                             <li key={i} className="flex items-start gap-3">
-                                                <CheckCircle className="w-5 h-5 text-yellow-green-400 flex-shrink-0 mt-0.5" />
-                                                <span className="text-white/90">{benefit}</span>
+                                                <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-yellow-green-400 flex-shrink-0 mt-0.5" />
+                                                <span className="text-sm md:text-base text-white/90">{benefit}</span>
                                             </li>
                                         ))}
                                     </ul>
@@ -231,31 +224,31 @@ export default function HomePage() {
                                 initial={{ opacity: 0, x: 20 }}
                                 whileInView={{ opacity: 1, x: 0 }}
                                 viewport={{ once: true }}
-                                className="bg-white rounded-3xl p-8 shadow-2xl"
+                                className="bg-white rounded-2xl md:rounded-3xl p-6 md:p-8 shadow-2xl"
                             >
                                 {guideSubmitted ? (
-                                    <div className="text-center py-8">
-                                        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                            <CheckCircle className="w-8 h-8 text-green-600" />
+                                    <div className="text-center py-4 md:py-8">
+                                        <div className="w-12 h-12 md:w-16 md:h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+                                            <CheckCircle className="w-6 h-6 md:w-8 md:h-8 text-green-600" />
                                         </div>
-                                        <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                                        <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
                                             {language === 'en' ? 'Check Your Email!' : 'Vérifiez Votre Email!'}
                                         </h3>
-                                        <p className="text-gray-600 mb-4">
+                                        <p className="text-gray-600 mb-4 text-sm">
                                             {language === 'en' 
-                                                ? 'Your guide is on its way! If the download didn\'t start automatically, click below.'
-                                                : 'Votre guide est en route! Si le téléchargement n\'a pas commencé automatiquement, cliquez ci-dessous.'}
+                                                ? 'Your guide is on its way!'
+                                                : 'Votre guide est en route!'}
                                         </p>
                                         {guide.downloadUrl && (
-                                            <a href={guide.downloadUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 bg-deep-space-blue-600 text-white font-bold rounded-full hover:bg-deep-space-blue-700">
+                                            <a href={guide.downloadUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 bg-deep-space-blue-600 text-white font-bold rounded-full hover:bg-deep-space-blue-700 text-sm">
                                                 <FileText className="w-4 h-4" /> 
-                                                {language === 'en' ? 'Download Guide' : 'Télécharger le Guide'}
+                                                {language === 'en' ? 'Download' : 'Télécharger'}
                                             </a>
                                         )}
                                     </div>
                                 ) : (
-                                    <form onSubmit={handleGuideSubmit(onGuideSubmit)} className="space-y-4">
-                                        <h3 className="text-xl font-bold text-gray-900 mb-2">
+                                    <form onSubmit={handleGuideSubmit(onGuideSubmit)} className="space-y-3 md:space-y-4">
+                                        <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2">
                                             {language === 'en' ? 'Get Free Guide Now' : 'Obtenez le Guide Gratuit'}
                                         </h3>
                                         <div>
@@ -263,7 +256,7 @@ export default function HomePage() {
                                                 {...registerGuide('name', { required: true })}
                                                 type="text"
                                                 placeholder={language === 'en' ? 'Enter your name' : 'Entrez votre nom'}
-                                                className="w-full p-4 rounded-xl bg-gray-50 border-2 border-gray-200 focus:border-deep-space-blue-500 focus:outline-none"
+                                                className="w-full p-3 md:p-4 rounded-xl bg-gray-50 border-2 border-gray-200 focus:border-deep-space-blue-500 focus:outline-none text-base"
                                             />
                                         </div>
                                         <div>
@@ -271,20 +264,20 @@ export default function HomePage() {
                                                 {...registerGuide('email', { required: true })}
                                                 type="email"
                                                 placeholder={language === 'en' ? 'Enter your email' : 'Entrez votre email'}
-                                                className="w-full p-4 rounded-xl bg-gray-50 border-2 border-gray-200 focus:border-deep-space-blue-500 focus:outline-none"
+                                                className="w-full p-3 md:p-4 rounded-xl bg-gray-50 border-2 border-gray-200 focus:border-deep-space-blue-500 focus:outline-none text-base"
                                             />
                                         </div>
                                         <button
                                             type="submit"
-                                            className="w-full py-4 bg-yellow-green-500 text-deep-space-blue-900 font-bold rounded-xl hover:bg-yellow-green-400 transition-colors flex items-center justify-center gap-2"
+                                            className="w-full py-3 md:py-4 bg-yellow-green-500 text-deep-space-blue-900 font-bold rounded-xl hover:bg-yellow-green-400 transition-colors flex items-center justify-center gap-2 text-base"
                                         >
                                             {language === 'en' ? 'Get Free Guide Now' : 'Obtenez le Guide Gratuit'}
                                             <ArrowRight className="w-4 h-4" />
                                         </button>
                                         <p className="text-xs text-gray-500 text-center">
                                             {language === 'en' 
-                                                ? 'We respect your privacy. Unsubscribe at any time.'
-                                                : 'Nous respectons votre vie privée. Désabonnez-vous à tout moment.'}
+                                                ? 'We respect your privacy.'
+                                                : 'Nous respectons votre vie privée.'}
                                         </p>
                                     </form>
                                 )}

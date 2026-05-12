@@ -67,13 +67,6 @@ export default function AboutPage() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 1 }}
                         >
-                            <motion.span 
-                                className="inline-block px-6 py-2 bg-yellow-green-500 text-gray-900 rounded-full font-bold text-sm uppercase tracking-widest mb-8"
-                                animate={{ scale: [1, 1.05, 1] }}
-                                transition={{ duration: 2, repeat: Infinity }}
-                            >
-                                {t('about.subtitle')}
-                            </motion.span>
                             <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold text-white mb-8 leading-none">
                                 {t('about.title').split(' ')[0]}<br />
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-green-400 to-yellow-green-600">
@@ -85,16 +78,6 @@ export default function AboutPage() {
                             </p>
                         </motion.div>
                     </div>
-                </div>
-
-                <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20">
-                    <motion.div
-                        animate={{ y: [0, 10, 0] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                        className="w-8 h-14 rounded-full border-2 border-white/30 flex items-start justify-center p-2"
-                    >
-                        <div className="w-1 h-3 bg-white/50 rounded-full"></div>
-                    </motion.div>
                 </div>
             </section>
 
