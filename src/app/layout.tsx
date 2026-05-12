@@ -10,7 +10,7 @@ import { LanguageProvider } from '@/context/LanguageContext'
 import { Toaster } from 'react-hot-toast'
 
 const inter = Inter({ subsets: ['latin'] })
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://medconstruction-cm.com'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://medconsarl.com'
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`
 
 export async function generateMetadata(): Promise<Metadata> {

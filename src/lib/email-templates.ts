@@ -161,7 +161,7 @@ export const contactNotificationEmail = (data: {
         </div>
         
         <div style="text-align: center;">
-            <a href="https://medconstruction-cm.com/admin/contacts" style="display: inline-block; background-color: ${COLORS.yellowGreen}; color: ${COLORS.deepSpaceBlue}; padding: 14px 35px; border-radius: 25px; font-size: 14px; font-weight: 700; text-decoration: none;">
+            <a href="https://medconsarl.com/admin/contacts" style="display: inline-block; background-color: ${COLORS.yellowGreen}; color: ${COLORS.deepSpaceBlue}; padding: 14px 35px; border-radius: 25px; font-size: 14px; font-weight: 700; text-decoration: none;">
                 View in Admin Dashboard →
             </a>
         </div>
@@ -280,7 +280,7 @@ export const testimonialNotificationEmail = (data: {
         </div>
         
         <div style="text-align: center; display: flex; gap: 15px; justify-content: center;">
-            <a href="https://medconstruction-cm.com/admin/testimonials" style="display: inline-block; background-color: ${COLORS.yellowGreen}; color: ${COLORS.deepSpaceBlue}; padding: 14px 30px; border-radius: 25px; font-size: 14px; font-weight: 700; text-decoration: none;">
+            <a href="https://medconsarl.com/admin/testimonials" style="display: inline-block; background-color: ${COLORS.yellowGreen}; color: ${COLORS.deepSpaceBlue}; padding: 14px 30px; border-radius: 25px; font-size: 14px; font-weight: 700; text-decoration: none;">
                 Review & Approve →
             </a>
         </div>
@@ -383,7 +383,7 @@ export const leadNotificationEmail = (data: {
         ` : ''}
         
         <div style="text-align: center;">
-            <a href="https://medconstruction-cm.com/admin/leads" style="display: inline-block; background-color: ${COLORS.yellowGreen}; color: ${COLORS.deepSpaceBlue}; padding: 14px 35px; border-radius: 25px; font-size: 14px; font-weight: 700; text-decoration: none;">
+            <a href="https://medconsarl.com/admin/leads" style="display: inline-block; background-color: ${COLORS.yellowGreen}; color: ${COLORS.deepSpaceBlue}; padding: 14px 35px; border-radius: 25px; font-size: 14px; font-weight: 700; text-decoration: none;">
                 View Lead in Dashboard →
             </a>
         </div>
@@ -464,7 +464,7 @@ export const contactReplyEmail = (data: {
                 </tr>
                 <tr>
                     <td style="padding: 8px 0;">
-                        <a href="https://med-con-sarl.vercel.app/contact" style="display: inline-flex; align-items: center; gap: 8px; color: ${COLORS.deepSpaceBlue}; text-decoration: none; font-size: 14px; font-weight: 500;">
+                        <a href="https://medconsarl.com/contact" style="display: inline-flex; align-items: center; gap: 8px; color: ${COLORS.deepSpaceBlue}; text-decoration: none; font-size: 14px; font-weight: 500;">
                             <span style="background-color: ${COLORS.yellowGreen}; color: ${COLORS.deepSpaceBlue}; padding: 8px; border-radius: 50%;">🌐</span>
                             Visit Our Website
                         </a>
@@ -575,7 +575,7 @@ export const guideDownloadEmail = (data: {
                 </tr>
                 <tr>
                     <td style="padding: 8px 0;">
-                        <a href="https://med-con-sarl.vercel.app/contact" style="display: inline-flex; align-items: center; gap: 8px; color: ${COLORS.deepSpaceBlue}; text-decoration: none; font-size: 14px; font-weight: 500;">
+                        <a href="https://medconsarl.com/contact" style="display: inline-flex; align-items: center; gap: 8px; color: ${COLORS.deepSpaceBlue}; text-decoration: none; font-size: 14px; font-weight: 500;">
                             <span style="background-color: ${COLORS.yellowGreen}; color: ${COLORS.deepSpaceBlue}; padding: 8px; border-radius: 50%;">🌐</span>
                             Get a Free Consultation
                         </a>
