@@ -16,6 +16,7 @@ interface Project {
     mainImage?: string
     location: string
     year: string
+    area?: string
     description: string
 }
 
