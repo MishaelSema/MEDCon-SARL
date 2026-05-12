@@ -15,13 +15,16 @@ export default function Navigation() {
     const { language, setLanguage, t } = useLanguage()
 
     const isHomePage = pathname === '/'
-    const isScrolledOrNonHome = !isHomePage
+
+    const navLinks = [
         { name: 'home', href: '/' },
         { name: 'about', href: '/about' },
         { name: 'services', href: '/services' },
         { name: 'portfolio', href: '/portfolio' },
         { name: 'contact', href: '/contact' },
     ]
+
+    const isScrolledOrNonHome = !isHomePage
 
     const getNavClasses = () => {
         if (mobileMenuOpen) return 'bg-deep-space-blue-800 text-white'
