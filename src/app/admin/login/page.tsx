@@ -1,151 +1,79 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { LogIn, Mail, Lock, AlertCircle } from 'lucide-react'
-import { useAuth } from '@/hooks/useAuth'
-import Link from 'next/link'
+import { Eye, EyeOff } from 'lucide-react'
 
-export default function AdminLoginPage() {
+export default function AdminLogin() {
+    const router = useRouter()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [error, setError] = useState('')
     const [showPassword, setShowPassword] = useState(false)
-    const [submitting, setSubmitting] = useState(false)
-    const router = useRouter()
-
-    // Default authLoading to false to prevent "blank page" if hook fails to update
-    const { login, isAuthenticated } = useAuth()
-    const [isClient, setIsClient] = useState(false)
-
-    useEffect(() => {
-        setIsClient(true)
-        if (isAuthenticated) {
-            router.replace('/admin/dashboard')
-        }
-    }, [isAuthenticated, router])
+    const [error, setError] = useState('')
+    const [loading, setLoading] = useState(false)
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
+        setLoading(true)
         setError('')
-        setSubmitting(true)
 
-        const result = await login(email, password)
+        try {
+            const res = await fetch('/api/admin/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            })
 
-        if (result.success) {
-            router.push('/admin/dashboard')
-        } else {
-            setError(result.error || 'Login failed')
-            setSubmitting(false)
+            if (res.ok) {
+                const data = await res.json()
+                localStorage.setItem('admin-token', data.token)
+                localStorage.setItem('admin-login-time', Date.now().toString())
+                router.push('/admin/dashboard')
+            } else {
+                setError('Invalid credentials')
+            }
+        } catch (err) {
+            setError('Something went wrong')
         }
+        setLoading(false)
     }
 
-    // Prevent hydration mismatch or early return blocking
-    if (!isClient) return <div className="min-h-screen bg-gray-900" />
-
-    // We removed the "if (loading) return spinner" block to ensure SOMETHING always renders.
-    // We can show a loading overlay if needed, but for now, let's prioritize visibility.
-
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-900 px-4 relative">
-            {/* Abstract Background - to ensure it's not just "blank" */}
-            <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[100px] pointer-events-none"></div>
-                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[100px] pointer-events-none"></div>
-            </div>
-
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md relative z-10"
-            >
+        <div className="min-h-screen bg-deep-space-blue-950 flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl">
                 <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-50 rounded-full mb-4">
-                        <LogIn className="w-8 h-8 text-blue-600" />
+                    <div className="w-16 h-16 bg-yellow-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span className="text-deep-space-blue-900 font-bold text-2xl">M</span>
                     </div>
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Panel</h1>
-                    <p className="text-gray-600">Secure access only</p>
+                    <h1 className="text-2xl font-bold text-gray-900">MEDCon Admin</h1>
+                    <p className="text-gray-500 text-sm mt-1">Sign in to your dashboard</p>
                 </div>
 
-                {error && (
-                    <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-700">
-                        <AlertCircle className="w-5 h-5 flex-shrink-0" />
-                        <span>{error}</span>
-                    </div>
-                )}
-
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Email
-                        </label>
-                        <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Mail className="h-5 w-5 text-gray-400" />
-                            </div>
-                            <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                                className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-colors"
-                                placeholder="name@company.com"
-                            />
-                        </div>
+                        <label className="block text-sm font-bold text-gray-700 mb-2">Email</label>
+                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full p-4 rounded-xl bg-gray-50 border-2 border-gray-200 focus:border-deep-space-blue-500 focus:outline-none" placeholder="admin@example.com" />
                     </div>
-
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Password
-                        </label>
+                        <label className="block text-sm font-bold text-gray-700 mb-2">Password</label>
                         <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Lock className="h-5 w-5 text-gray-400" />
-                            </div>
-                            <input
-                                type={showPassword ? "text" : "password"}
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                                className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-colors"
-                                placeholder="••••••••"
-                            />
-                            <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
-                            >
-                                {showPassword ? (
-                                    <span className="text-xs font-medium">Hide</span>
-                                ) : (
-                                    <span className="text-xs font-medium">Show</span>
-                                )}
+                            <input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full p-4 rounded-xl bg-gray-50 border-2 border-gray-200 focus:border-deep-space-blue-500 focus:outline-none pr-12" placeholder="Enter your password" />
+                            <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
+                                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                             </button>
                         </div>
                     </div>
 
-                    <button
-                        type="submit"
-                        disabled={submitting}
-                        className="w-full bg-gray-900 text-white py-3 rounded-lg font-bold hover:bg-gray-800 transition-colors shadow-lg disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
-                    >
-                        {submitting ? (
-                            <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/30 border-t-white" />
-                        ) : (
-                            'Sign In'
-                        )}
+                    {error && <div className="bg-red-50 text-red-600 p-3 rounded-xl text-sm font-medium">{error}</div>}
+
+                    <button type="submit" disabled={loading} className="w-full py-4 bg-deep-space-blue-600 text-white font-bold rounded-xl hover:bg-deep-space-blue-700 transition-colors disabled:opacity-50">
+                        {loading ? 'Signing in...' : 'Sign In'}
                     </button>
                 </form>
 
-                <div className="mt-6 text-center">
-                    <Link
-                        href="/"
-                        className="text-sm text-gray-500 hover:text-gray-900 font-medium"
-                    >
-                        ← Back to website
-                    </Link>
+                <div className="mt-6 text-center text-sm text-gray-500">
+                    <p>Default: admin@medcon.com / admin123</p>
                 </div>
             </motion.div>
         </div>

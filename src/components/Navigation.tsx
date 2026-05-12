@@ -2,148 +2,164 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, ShoppingBag, User } from 'lucide-react'
+import { Menu, X, Globe } from 'lucide-react'
+import { useLanguage } from '@/context/LanguageContext'
+import logo from '@/assets/MEDConSARL_logo.png'
 
 export default function Navigation() {
     const [isScrolled, setIsScrolled] = useState(false)
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const pathname = usePathname()
+    const { language, setLanguage, t } = useLanguage()
 
+    const isHomePage = pathname === '/'
+    const isScrolledOrNonHome = !isHomePage || isScrolled
 
-
-    // Define pages that show a dark hero/image at the top, allowing for transparent nav
-    const hasDarkHero =
-        pathname === '/' ||
-        pathname === '/help/about' ||
-        pathname === '/resources/gallery' ||
-        pathname === '/help' ||
-        (pathname.startsWith('/resources/tiny-homes/') && pathname !== '/resources/tiny-homes')
-
-    // Handle scroll detection
     useEffect(() => {
         const handleScroll = () => {
-            setIsScrolled(window.scrollY > 20)
+            setIsScrolled(window.scrollY > 50)
         }
         window.addEventListener('scroll', handleScroll)
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
 
     const navLinks = [
-        { name: 'Shop', href: '/resources/tiny-homes' },
-        { name: 'Resources', href: '/resources' },
-        { name: 'About', href: '/help/about' },
-        { name: 'Help', href: '/help' },
+        { name: 'home', href: '/' },
+        { name: 'about', href: '/about' },
+        { name: 'services', href: '/services' },
+        { name: 'portfolio', href: '/portfolio' },
+        { name: 'contact', href: '/contact' },
     ]
 
-    // Logic: 
-    // If we are on a page with a dark Hero, we act transparent at top, white when scrolled.
-    // If we are on a page with a white/light Hero (default), we ALWAYS act "scrolled" (white background).
-
-    const effectiveIsScrolled = isScrolled || !hasDarkHero
-
     const getNavClasses = () => {
-        if (mobileMenuOpen) return 'bg-white text-gray-900'
-
-        return effectiveIsScrolled
-            ? 'bg-white/90 backdrop-blur-md text-gray-900 shadow-sm py-4'
-            : 'bg-transparent text-white py-6'
+        if (mobileMenuOpen) return 'bg-deep-space-blue-800 text-white'
+        
+        if (isScrolledOrNonHome) {
+            return 'bg-white text-gray-900 shadow-lg'
+        }
+        
+        return 'bg-transparent text-white'
     }
 
-    // Logo logic: Blue/Dark when white background, White when transparent background
-    const getLogoClasses = () => {
-        return effectiveIsScrolled ? 'bg-blue-600 text-white' : 'bg-white text-gray-900'
+    const getLinkClasses = (href: string) => {
+        const isActive = pathname === href
+        const baseClasses = 'px-5 py-2 font-medium transition-all duration-300 rounded-full'
+        
+        if (isScrolledOrNonHome) {
+            return `${baseClasses} ${isActive ? 'bg-deep-space-blue-600 text-white' : 'hover:bg-deep-space-blue-50 text-gray-700'}`
+        }
+        
+        return `${baseClasses} ${isActive ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-white'}`
     }
 
-    // Hide Navigation on all Admin pages (including Login)
+    const getQuoteClasses = () => {
+        const baseClasses = 'flex items-center gap-2 px-5 py-2.5 font-bold transition-all duration-300 rounded-full'
+        
+        if (isScrolledOrNonHome) {
+            return `${baseClasses} bg-yellow-green-500 text-deep-space-blue-900 hover:bg-yellow-green-400`
+        }
+        
+        return `${baseClasses} bg-yellow-green-500 text-deep-space-blue-900 hover:bg-yellow-green-400`
+    }
+
+    const getLangButtonClasses = () => {
+        const baseClasses = 'flex items-center gap-2 px-3 py-2 font-medium transition-all duration-300 rounded-full'
+        
+        if (isScrolledOrNonHome) {
+            return `${baseClasses} bg-gray-100 text-gray-700 hover:bg-gray-200`
+        }
+        
+        return `${baseClasses} bg-white/20 text-white hover:bg-white/30`
+    }
+
     if (pathname?.startsWith('/admin')) return null
 
     return (
         <>
-            <nav
-                className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${getNavClasses()}`}
-            >
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <nav className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ${getNavClasses()} ${isScrolledOrNonHome ? 'w-[calc(100%-2rem)] max-w-5xl' : 'w-[calc(100%-4rem)] max-w-6xl'}`} style={{ borderRadius: '9999px' }}>
+                <div className="max-w-7xl mx-auto px-2 py-2">
                     <div className="flex items-center justify-between">
-                        {/* Logo */}
-                        <Link href="/" className="flex items-center gap-2">
-                            <span className="text-2xl font-bold tracking-tight">CalmiCasa</span>
+                        <Link href="/" className="pl-2">
+                            <Image src={logo} alt="MEDCon SARL" width={140} height={56} className="h-14 w-auto" />
                         </Link>
 
-                        {/* Desktop Nav */}
-                        <div className="hidden md:flex items-center gap-8">
+                        <div className="hidden lg:flex items-center gap-1">
                             {navLinks.map((link) => (
                                 <Link
                                     key={link.name}
                                     href={link.href}
-                                    className="font-medium hover:opacity-70 transition-opacity"
+                                    className={getLinkClasses(link.href)}
                                 >
-                                    {link.name}
+                                    {t(`nav.${link.name}`)}
                                 </Link>
                             ))}
-                            <div className="h-6 w-px bg-current opacity-20 mx-2"></div>
-
-                            {/* Admin Link */}
-                            <Link href="/admin/login" className="font-medium hover:opacity-70 transition-opacity flex items-center gap-2" title="Admin Login">
-                                <User className="w-4 h-4" />
-                            </Link>
-
-                            <Link
-                                href="/resources/tiny-homes"
-                                className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold transition-all ${effectiveIsScrolled
-                                    ? 'bg-gray-900 text-white hover:bg-gray-800'
-                                    : 'bg-white text-gray-900 hover:bg-gray-100'
-                                    }`}
-                            >
-                                <ShoppingBag className="w-4 h-4" /> Shop
-                            </Link>
                         </div>
 
-                        {/* Mobile Toggle */}
-                        <button
-                            className="md:hidden p-2"
-                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                        >
-                            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-                        </button>
+                        <div className="hidden lg:flex items-center gap-3 pr-2">
+                            <Link href="/contact" className={getQuoteClasses()}>
+                                {t('nav.getQuote')}
+                            </Link>
+
+                            <button
+                                onClick={() => setLanguage(language === 'en' ? 'fr' : 'en')}
+                                className={getLangButtonClasses()}
+                            >
+                                <Globe className="w-4 h-4" />
+                                <span className="text-sm uppercase font-bold">{language}</span>
+                            </button>
+                        </div>
+
+                        <div className="flex items-center gap-2 lg:hidden pr-2">
+                            <button
+                                onClick={() => setLanguage(language === 'en' ? 'fr' : 'en')}
+                                className={`p-2 transition-all ${isScrolledOrNonHome ? 'bg-gray-100 rounded-full' : 'bg-white/20 rounded-full'}`}
+                            >
+                                <Globe className={`w-5 h-5 ${isScrolledOrNonHome ? 'text-gray-700' : 'text-white'}`} />
+                            </button>
+                            <button
+                                className="p-2"
+                                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                            >
+                                {mobileMenuOpen ? (
+                                    <X className={`w-6 h-6 ${isScrolledOrNonHome ? 'text-gray-900' : 'text-white'}`} />
+                                ) : (
+                                    <Menu className={`w-6 h-6 ${isScrolledOrNonHome ? 'text-gray-900' : 'text-white'}`} />
+                                )}
+                            </button>
+                        </div>
                     </div>
                 </div>
             </nav>
 
-            {/* Mobile Menu Overlay */}
             <AnimatePresence>
                 {mobileMenuOpen && (
                     <motion.div
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
-                        className="fixed inset-0 z-40 bg-white pt-24 px-4 md:hidden"
+                        className="fixed inset-0 z-40 bg-deep-space-blue-800 pt-24 px-6 lg:hidden"
+                        style={{ borderRadius: 0 }}
                     >
-                        <div className="flex flex-col gap-6 text-center">
+                        <div className="flex flex-col gap-3">
                             {navLinks.map((link) => (
                                 <Link
                                     key={link.name}
                                     href={link.href}
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="text-2xl font-bold text-gray-900"
+                                    className="text-xl font-bold text-white py-4 border-b border-white/20"
                                 >
-                                    {link.name}
+                                    {t(`nav.${link.name}`)}
                                 </Link>
                             ))}
                             <Link
-                                href="/admin/login"
+                                href="/contact"
                                 onClick={() => setMobileMenuOpen(false)}
-                                className="text-lg font-medium text-gray-500"
+                                className="mt-6 px-6 py-4 bg-yellow-green-500 text-deep-space-blue-900 rounded-full font-bold text-center"
                             >
-                                Admin Login
-                            </Link>
-                            <hr className="border-gray-100" />
-                            <Link
-                                href="/resources/tiny-homes"
-                                className="px-6 py-4 bg-gray-900 text-white rounded-xl font-bold flex items-center justify-center gap-2 mx-4"
-                            >
-                                <ShoppingBag className="w-5 h-5" /> Shop Now
+                                {t('nav.getQuote')}
                             </Link>
                         </div>
                     </motion.div>

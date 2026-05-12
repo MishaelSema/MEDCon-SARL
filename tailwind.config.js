@@ -1,16 +1,90 @@
-  /** @type {import('tailwindcss').Config} */
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
- 
-    // Or if using src directory:
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      keyframes: {
+        marquee: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+      },
+      animation: {
+        marquee: 'marquee 30s linear infinite',
+      },
+      colors: {
+        'deep-space-blue': {
+          50: '#b8d4e8',
+          100: '#8bbcd8',
+          200: '#5e9ec8',
+          300: '#3180b8',
+          400: '#0e6a9f',
+          500: '#095580',
+          600: '#073856',
+          700: '#052b41',
+          800: '#041e2c',
+          900: '#03131a',
+          950: '#02090e',
+        },
+        'dark-cyan': {
+          50: '#ecf8f8',
+          100: '#d9f2f2',
+          200: '#b3e4e5',
+          300: '#8dd7d8',
+          400: '#67c9cb',
+          500: '#41bcbe',
+          600: '#349698',
+          700: '#277172',
+          800: '#1a4b4c',
+          900: '#0d2626',
+          950: '#091a1b',
+        },
+        'yellow-green': {
+          50: '#f5f9eb',
+          100: '#ebf4d7',
+          200: '#d7e8b0',
+          300: '#c3dd88',
+          400: '#afd161',
+          500: '#9cc639',
+          600: '#7c9e2e',
+          700: '#5d7722',
+          800: '#3e4f17',
+          900: '#1f280b',
+          950: '#161c08',
+        },
+        'cornsilk': {
+          50: '#fbf9e9',
+          100: '#f7f3d4',
+          200: '#f0e7a8',
+          300: '#e8dc7d',
+          400: '#e0d052',
+          500: '#d9c426',
+          600: '#ad9d1f',
+          700: '#827617',
+          800: '#574e0f',
+          900: '#2b2708',
+          950: '#1e1b05',
+        },
+        'yale-blue': {
+          50: '#e7f6fd',
+          100: '#d0ecfb',
+          200: '#a0d9f8',
+          300: '#71c6f4',
+          400: '#41b3f1',
+          500: '#12a0ed',
+          600: '#0e80be',
+          700: '#0b608e',
+          800: '#07405f',
+          900: '#04202f',
+          950: '#021621',
+        },
+      },
+    },
   },
   plugins: [],
 }
-              

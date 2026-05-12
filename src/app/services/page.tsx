@@ -1,165 +1,284 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import Link from 'next/link'
+import { Suspense, useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
-import { Users, Calendar, Palette, MessageCircle, ShoppingBag, ArrowRight, Star } from 'lucide-react'
+import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
+import { ArrowRight, ChevronLeft, ChevronRight, CheckCircle, Phone, Mail, Loader2 } from 'lucide-react'
+import { useLanguage } from '@/context/LanguageContext'
 
-export default function ServicesPage() {
-    const services = [
-        {
-            title: 'Community Access',
-            description: 'Join our vibrant community of tiny home enthusiasts. Share experiences, get advice, and make lifelong friends.',
-            icon: Users,
-            href: '/services/community',
-            color: 'bg-blue-100 text-blue-600',
-            image: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800&h=500&fit=crop'
-        },
-        {
-            title: 'Premium Membership',
-            description: 'Unlock exclusive content, early access to designs, and special discounts on products and consulting.',
-            icon: Star,
-            href: '/services/membership',
-            color: 'bg-yellow-100 text-yellow-600',
-            image: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&h=500&fit=crop'
-        },
-        {
-            title: 'Online Events',
-            description: 'Participate in virtual workshops, webinars, and Q&A sessions with industry experts.',
-            icon: Calendar,
-            href: '/services/online-event',
-            color: 'bg-purple-100 text-purple-600',
-            image: 'https://images.unsplash.com/photo-1543353071-087f9daac2bf?w=800&h=500&fit=crop'
-        },
-        {
-            title: '3D Home Designer',
-            description: 'Work with our expert designers to create the perfect 3D model of your dream tiny home.',
-            icon: Palette,
-            href: '/services/3d-designer',
-            color: 'bg-pink-100 text-pink-600',
-            image: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800&h=500&fit=crop'
-        },
-        {
-            title: 'Expert Consulting',
-            description: 'One-on-one sessions with tiny home builders and legal experts to guide your journey.',
-            icon: MessageCircle,
-            href: '/services/consulting',
-            color: 'bg-green-100 text-green-600',
-            image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&h=500&fit=crop'
-        },
-        {
-            title: 'Tiny Home Shop',
-            description: 'Browse our curated collection of furniture, appliances, and accessories designed for compact living.',
-            icon: ShoppingBag,
-            href: '/services/shop',
-            color: 'bg-orange-100 text-orange-600',
-            image: 'https://images.unsplash.com/photo-1532453288672-3a27e9be9efd?w=800&h=500&fit=crop'
+interface Service {
+    _id: string
+    title: string
+    description: string
+    features: string[]
+    images: string[]
+    icon?: string
+}
+
+function ServicesContent() {
+    const { t, language } = useLanguage()
+    const searchParams = useSearchParams()
+    const [activeIndex, setActiveIndex] = useState(0)
+    const [services, setServices] = useState<Service[]>([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        fetchServices()
+    }, [])
+
+    const fetchServices = async () => {
+        try {
+            const res = await fetch('/api/admin/services')
+            if (res.ok) {
+                const data = await res.json()
+                setServices(data)
+            }
+        } catch (error) {
+            console.error('Error fetching services:', error)
+        } finally {
+            setLoading(false)
         }
-    ]
+    }
+
+    useEffect(() => {
+        const serviceParam = searchParams.get('service')
+        if (serviceParam && services.length > 0) {
+            const index = services.findIndex(s => s._id === serviceParam || s.title.toLowerCase().replace(/\s+/g, '') === serviceParam)
+            if (index !== -1) setActiveIndex(index)
+        }
+    }, [searchParams, services])
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-deep-space-blue-600" />
+            </div>
+        )
+    }
+
+    const activeService = services[activeIndex] || services[0]
+
+    const prevService = () => {
+        setActiveIndex((prev) => (prev === 0 ? services.length - 1 : prev - 1))
+    }
+
+    const nextService = () => {
+        setActiveIndex((prev) => (prev === services.length - 1 ? 0 : prev + 1))
+    }
 
     return (
-        <div className="min-h-screen pt-16">
-            {/* Hero Section */}
-            <section className="relative py-24 bg-gradient-to-br from-gray-900 to-gray-800 text-white overflow-hidden">
+        <div className="min-h-screen">
+            <section className="relative h-[60vh] flex items-center justify-center px-4 overflow-hidden">
                 <div className="absolute inset-0 z-0">
-                    <div className="absolute inset-0 bg-black/60 z-10"></div>
                     <Image
-                        src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1920&h=1080&fit=crop"
-                        alt="Services Background"
+                        src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=1920&h=1080&fit=crop"
+                        alt="Construction"
                         fill
                         className="object-cover"
                         priority
                     />
+                    <div className="absolute inset-0 bg-deep-space-blue-600/70"></div>
                 </div>
 
-                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <div className="max-w-4xl mx-auto text-center relative z-10">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
                     >
-                        <h1 className="text-4xl md:text-6xl font-bold mb-6">
-                            Our Services
-                        </h1>
-                        <p className="text-xl md:text-2xl text-gray-200 mb-10 max-w-3xl mx-auto">
-                            Everything you need to plan, build, and live your tiny home dream.
-                        </p>
+                        <span className="text-yellow-green-400 font-bold tracking-[0.3em] uppercase text-sm mb-4 block">
+                            {t('services.subtitle')}
+                        </span>
+                        <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">{t('services.title')}</h1>
+                        <p className="text-xl text-white/80 max-w-2xl mx-auto">{t('services.description')}</p>
                     </motion.div>
                 </div>
             </section>
 
-            {/* Services Grid */}
-            <section className="py-20 bg-gray-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {services.map((service, index) => (
+            {services.length === 0 ? (
+                <section className="py-20 text-center">
+                    <p className="text-gray-500 text-lg">
+                        {language === 'en' ? 'No services available.' : 'Aucun service disponible.'}
+                    </p>
+                    <Link href="/contact" className="mt-4 inline-block px-6 py-3 bg-deep-space-blue-600 text-white font-bold rounded-full">
+                        {t('nav.getQuote')}
+                    </Link>
+                </section>
+            ) : (
+                <section className="relative min-h-[70vh] flex items-center overflow-hidden">
+                    <div className="absolute inset-0 z-0">
+                        <AnimatePresence mode="wait">
                             <motion.div
-                                key={service.title}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.5, delay: index * 0.1 }}
-                                viewport={{ once: true }}
-                                whileHover={{ y: -5 }}
-                                className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300"
+                                key={activeService.images?.[0] || 'default'}
+                                initial={{ opacity: 0, scale: 1.1 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.8 }}
+                                className="absolute inset-0"
                             >
-                                <div className="relative h-48">
-                                    <Image
-                                        src={service.image}
-                                        alt={service.title}
-                                        fill
-                                        className="object-cover"
-                                    />
-                                    <div className="absolute top-4 left-4">
-                                        <div className={`p-3 rounded-xl ${service.color}`}>
-                                            <service.icon className="w-6 h-6" />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="p-6">
-                                    <h3 className="text-xl font-bold text-gray-900 mb-3">{service.title}</h3>
-                                    <p className="text-gray-600 mb-6 line-clamp-3">
-                                        {service.description}
-                                    </p>
-                                    <Link
-                                        href={service.href}
-                                        className="inline-flex items-center text-blue-600 font-semibold hover:text-blue-700 transition-colors group"
-                                    >
-                                        Learn More
-                                        <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
-                                    </Link>
-                                </div>
+                                <Image
+                                    src={activeService.images?.[0] || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1920&h=1080&fit=crop'}
+                                    alt="Background"
+                                    fill
+                                    className="object-cover"
+                                />
                             </motion.div>
-                        ))}
+                        </AnimatePresence>
+                        <div className="absolute inset-0 bg-white/90"></div>
                     </div>
-                </div>
-            </section>
 
-            {/* CTA Section */}
-            <section className="py-20 bg-white">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="bg-gradient-to-r from-blue-600 to-green-600 rounded-3xl p-8 md:p-16 text-center text-white relative overflow-hidden">
-                        <div className="relative z-10">
-                            <h2 className="text-3xl md:text-5xl font-bold mb-6">Need Custom Solutions?</h2>
-                            <p className="text-lg md:text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-                                We understand that every tiny home journey is unique. Contact us to discuss your specific requirements.
-                            </p>
-                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                                <Link
-                                    href="/help/contact"
-                                    className="inline-flex items-center px-8 py-4 bg-white text-blue-600 font-bold rounded-xl hover:bg-gray-100 transition-colors shadow-lg"
+                    <div className="max-w-7xl mx-auto px-4 py-20 relative z-10 w-full">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                            <div className="relative">
+                                <AnimatePresence mode="wait">
+                                    <motion.div
+                                        key={activeService._id}
+                                        initial={{ opacity: 0, x: -50 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: 50 }}
+                                        transition={{ duration: 0.5 }}
+                                        className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl"
+                                    >
+                                        <Image
+                                            src={activeService.images?.[0] || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&h=800&fit=crop'}
+                                            alt={activeService.title}
+                                            fill
+                                            className="object-cover"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+                                        <div className="absolute bottom-6 left-6">
+                                            <div className="w-16 h-16 bg-yellow-green-500 rounded-2xl flex items-center justify-center shadow-lg">
+                                                <span className="text-deep-space-blue-600 font-bold text-2xl">{activeService.title.charAt(0)}</span>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                </AnimatePresence>
+
+                                <button
+                                    onClick={prevService}
+                                    className="absolute -left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
                                 >
-                                    Contact Us Today
-                                </Link>
-                            </motion.div>
+                                    <ChevronLeft className="w-6 h-6 text-deep-space-blue-600" />
+                                </button>
+                                <button
+                                    onClick={nextService}
+                                    className="absolute -right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
+                                >
+                                    <ChevronRight className="w-6 h-6 text-deep-space-blue-600" />
+                                </button>
+                            </div>
+
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={activeService._id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    transition={{ duration: 0.4 }}
+                                >
+                                    <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                                        {activeService.title}
+                                    </h2>
+                                    <p className="text-xl text-gray-600 mb-8">
+                                        {activeService.description}
+                                    </p>
+
+                                    <div className="grid grid-cols-2 gap-4 mb-8">
+                                        {activeService.features?.map((feature, i) => (
+                                            <div key={i} className="flex items-center gap-3">
+                                                <CheckCircle className="w-5 h-5 text-yellow-green-500 flex-shrink-0" />
+                                                <span className="text-gray-700">{feature}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <Link
+                                        href="/contact"
+                                        className="inline-flex items-center gap-2 px-8 py-4 bg-deep-space-blue-600 text-white font-bold rounded-full hover:bg-deep-space-blue-700 transition-colors"
+                                    >
+                                        {t('nav.getQuote')} <ArrowRight className="w-5 h-5" />
+                                    </Link>
+                                </motion.div>
+                            </AnimatePresence>
                         </div>
 
-                        {/* Decorative circles */}
-                        <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full -translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
-                        <div className="absolute bottom-0 right-0 w-64 h-64 bg-white/10 rounded-full translate-x-1/2 translate-y-1/2 blur-2xl"></div>
+                        <div className="flex justify-center gap-3 mt-12">
+                            {services.map((service, index) => (
+                                <button
+                                    key={service._id}
+                                    onClick={() => setActiveIndex(index)}
+                                    className={`w-3 h-3 rounded-full transition-all ${
+                                        activeIndex === index
+                                            ? 'bg-deep-space-blue-600 w-8'
+                                            : 'bg-gray-300 hover:bg-gray-400'
+                                    }`}
+                                    aria-label={service.title}
+                                />
+                            ))}
+                        </div>
+
+                        <div className="flex flex-wrap justify-center gap-3 mt-6">
+                            {services.map((service, index) => (
+                                <button
+                                    key={service._id}
+                                    onClick={() => setActiveIndex(index)}
+                                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                                        activeIndex === index
+                                            ? 'bg-deep-space-blue-600 text-white'
+                                            : 'bg-white/80 text-gray-700 hover:bg-white'
+                                    }`}
+                                >
+                                    {service.title}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            <section className="py-20 bg-deep-space-blue-600 text-white">
+                <div className="max-w-7xl mx-auto px-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+                                {language === 'en' ? 'Need a Custom Solution?' : 'Besoin d\'une Solution Personnalisée?'}
+                            </h2>
+                            <p className="text-lg text-white/80 mb-8">
+                                {language === 'en'
+                                    ? "Don't see what you're looking for? We offer tailored construction solutions for unique project requirements."
+                                    : "Vous ne trouvez pas ce que vous cherchez? Nous offrons des solutions de construction sur mesure pour vos besoins uniques."}
+                            </p>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row gap-4">
+                            <Link
+                                href="/contact"
+                                className="flex items-center justify-center gap-2 px-6 py-4 bg-yellow-green-500 text-deep-space-blue-600 font-bold rounded-full hover:bg-yellow-green-400 transition-colors"
+                            >
+                                <Phone className="w-5 h-5" />
+                                {language === 'en' ? 'Contact Us' : 'Contactez-Nous'}
+                            </Link>
+                            <a
+                                href="mailto:medcocoltd@gmail.com"
+                                className="flex items-center justify-center gap-2 px-6 py-4 bg-white text-deep-space-blue-600 font-bold rounded-full hover:bg-gray-100 transition-colors"
+                            >
+                                <Mail className="w-5 h-5" />
+                                {language === 'en' ? 'Email Us' : 'Envoyez un Email'}
+                            </a>
+                        </div>
                     </div>
                 </div>
             </section>
         </div>
+    )
+}
+
+export default function ServicesPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-4 border-deep-space-blue-600 border-t-transparent"></div></div>}>
+            <ServicesContent />
+        </Suspense>
     )
 }

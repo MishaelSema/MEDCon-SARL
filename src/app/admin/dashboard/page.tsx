@@ -1,171 +1,117 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useAuth } from '@/hooks/useAuth'
-import { motion } from 'framer-motion'
-import { FileText, Image as ImageIcon, Calendar, MessageSquare, Users, TrendingUp } from 'lucide-react'
+import { useState } from 'react'
+import Link from 'next/link'
+import { LayoutDashboard, FolderOpen, Briefcase, MessageSquare, Star } from 'lucide-react'
+
+const stats = { portfolio: 8, services: 5, testimonials: 12, messages: 3, pendingTestimonials: 2 }
 
 export default function AdminDashboard() {
-    const { token } = useAuth()
-    const [orders, setOrders] = useState<any[]>([])
-    const [loading, setLoading] = useState(true)
-
-    const stats = [
-        {
-            label: 'Total Blog Posts',
-            value: '0',
-            icon: FileText,
-            color: 'from-blue-500 to-blue-600',
-            bgColor: 'bg-blue-50',
-            textColor: 'text-blue-600',
-        },
-        {
-            label: 'Gallery Images',
-            value: '0',
-            icon: ImageIcon,
-            color: 'from-green-500 to-green-600',
-            bgColor: 'bg-green-50',
-            textColor: 'text-green-600',
-        },
-        {
-            label: 'Upcoming Events',
-            value: '0',
-            icon: Calendar,
-            color: 'from-purple-500 to-purple-600',
-            bgColor: 'bg-purple-50',
-            textColor: 'text-purple-600',
-        },
-        {
-            label: 'Contact Messages',
-            value: '0',
-            icon: MessageSquare,
-            color: 'from-orange-500 to-orange-600',
-            bgColor: 'bg-orange-50',
-            textColor: 'text-orange-600',
-        },
-    ]
-
-    const recentActivity = [
-        { action: 'System initialized', time: 'Just now', type: 'info' },
-    ]
-
-    useEffect(() => {
-        const fetchOrders = async () => {
-            if (!token) return
-            try {
-                const res = await fetch('/api/order', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                })
-                if (res.ok) {
-                    const data = await res.json()
-                    setOrders(data)
-                }
-            } catch (error) {
-                console.error('Failed to fetch orders', error)
-            } finally {
-                setLoading(false)
-            }
-        }
-        fetchOrders()
-    }, [token])
-
     return (
-        <div className="space-y-6">
-            {/* Welcome Section */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-gray-900 rounded-2xl p-8 text-white relative overflow-hidden"
-            >
-                <h2 className="text-3xl font-bold mb-2">Welcome to CalmiCasa Admin</h2>
-                <p className="text-blue-100">
-                    Manage your tiny homes website content from this dashboard
-                </p>
-            </motion.div>
-
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {stats.map((stat, index) => {
-                    const Icon = stat.icon
-                    return (
-                        <motion.div
-                            key={stat.label}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.1 }}
-                            className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
-                        >
-                            <div className="flex items-center justify-between mb-4">
-                                <div className={`p-3 ${stat.bgColor} rounded-lg`}>
-                                    <Icon className={`w-6 h-6 ${stat.textColor}`} />
-                                </div>
-                            </div>
-                            <div className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</div>
-                            <div className="text-sm text-gray-600">{stat.label}</div>
-                        </motion.div>
-                    )
-                })}
+        <div>
+            <div className="mb-6">
+                <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
             </div>
 
-            {/* Recent Activity & Recent Orders */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div className="bg-white rounded-2xl p-6 shadow-sm">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-gray-500">Portfolio Projects</p>
+                            <p className="text-3xl font-bold text-gray-900 mt-1">{stats.portfolio}</p>
+                        </div>
+                        <div className="w-12 h-12 bg-deep-space-blue-100 rounded-xl flex items-center justify-center">
+                            <FolderOpen className="w-6 h-6 text-deep-space-blue-600" />
+                        </div>
+                    </div>
+                </div>
+                <div className="bg-white rounded-2xl p-6 shadow-sm">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-gray-500">Services</p>
+                            <p className="text-3xl font-bold text-gray-900 mt-1">{stats.services}</p>
+                        </div>
+                        <div className="w-12 h-12 bg-yellow-green-100 rounded-xl flex items-center justify-center">
+                            <Briefcase className="w-6 h-6 text-yellow-green-600" />
+                        </div>
+                    </div>
+                </div>
+                <div className="bg-white rounded-2xl p-6 shadow-sm">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-gray-500">Testimonials</p>
+                            <p className="text-3xl font-bold text-gray-900 mt-1">{stats.testimonials}</p>
+                        </div>
+                        <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                            <Star className="w-6 h-6 text-green-600" />
+                        </div>
+                    </div>
+                </div>
+                <div className="bg-white rounded-2xl p-6 shadow-sm">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-gray-500">Messages</p>
+                            <p className="text-3xl font-bold text-gray-900 mt-1">{stats.messages}</p>
+                        </div>
+                        <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+                            <MessageSquare className="w-6 h-6 text-red-600" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 }}
-                    className="bg-white rounded-xl p-6 shadow-sm"
-                >
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+                <div className="bg-white rounded-2xl p-6 shadow-sm">
+                    <h3 className="text-lg font-bold text-gray-900 mb-4">Recent Messages</h3>
                     <div className="space-y-4">
-                        {recentActivity.map((activity, index) => (
-                            <div key={index} className="flex items-center gap-3 pb-4 border-b border-gray-100 last:border-0">
-                                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                <div className="flex-1">
-                                    <p className="text-sm text-gray-900">{activity.action}</p>
-                                    <p className="text-xs text-gray-500">{activity.time}</p>
+                        <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl">
+                            <div className="w-10 h-10 bg-deep-space-blue-100 rounded-full flex items-center justify-center text-deep-space-blue-600 font-bold">J</div>
+                            <div className="flex-1">
+                                <div className="flex items-center justify-between">
+                                    <h4 className="font-bold text-gray-900">Jean Kamga</h4>
+                                    <span className="text-xs text-gray-500">2h ago</span>
+                                </div>
+                                <p className="text-sm text-gray-600 mt-1">Interested in residential construction project...</p>
+                            </div>
+                        </div>
+                        <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl">
+                            <div className="w-10 h-10 bg-yellow-green-100 rounded-full flex items-center justify-center text-yellow-green-600 font-bold">M</div>
+                            <div className="flex-1">
+                                <div className="flex items-center justify-between">
+                                    <h4 className="font-bold text-gray-900">Marie Nguema</h4>
+                                    <span className="text-xs text-gray-500">5h ago</span>
+                                </div>
+                                <p className="text-sm text-gray-600 mt-1">Need quote for office renovation...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <Link href="/admin/contacts" className="block mt-4 text-center text-deep-space-blue-600 font-bold hover:underline">View All Messages</Link>
+                </div>
+
+                <div className="bg-white rounded-2xl p-6 shadow-sm">
+                    <h3 className="text-lg font-bold text-gray-900 mb-4">Pending Testimonials</h3>
+                    <div className="space-y-4">
+                        <div className="flex items-start gap-4 p-4 bg-yellow-green-50 rounded-xl">
+                            <div className="w-10 h-10 bg-deep-space-blue-100 rounded-full flex items-center justify-center text-deep-space-blue-600 font-bold">S</div>
+                            <div className="flex-1">
+                                <div className="flex items-center justify-between">
+                                    <h4 className="font-bold text-gray-900">Steven Harris</h4>
+                                    <div className="flex gap-0.5">
+                                        <Star className="w-3 h-3 text-yellow-green-500 fill-yellow-green-500" />
+                                        <Star className="w-3 h-3 text-yellow-green-500 fill-yellow-green-500" />
+                                        <Star className="w-3 h-3 text-yellow-green-500 fill-yellow-green-500" />
+                                    </div>
+                                </div>
+                                <p className="text-sm text-gray-600 mt-1">Good quality but shipping was slow...</p>
+                                <div className="flex gap-2 mt-3">
+                                    <button className="px-3 py-1 bg-green-500 text-white text-xs font-bold rounded-lg">Approve</button>
+                                    <button className="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-lg">Reject</button>
                                 </div>
                             </div>
-                        ))}
-                    </div>
-                </motion.div>
-
-                {/* Recent Orders (Replaces Quick Actions) */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
-                    className="bg-white rounded-xl p-6 shadow-sm"
-                >
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
-                        <a href="/admin/orders" className="text-sm text-blue-600 hover:text-blue-700 font-medium">View All</a>
-                    </div>
-
-                    {loading ? (
-                        <div className="text-center py-8 text-gray-500">Loading orders...</div>
-                    ) : orders.length === 0 ? (
-                        <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-lg">No recent orders found.</div>
-                    ) : (
-                        <div className="space-y-3">
-                            {orders.slice(0, 5).map((order) => (
-                                <div key={order._id} className="block p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
-                                    <div className="flex justify-between items-start mb-1">
-                                        <span className="font-bold text-gray-900">{order.modelName}</span>
-                                        <span className={`text-xs px-2 py-0.5 rounded-full ${order.status === 'Pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}`}>
-                                            {order.status}
-                                        </span>
-                                    </div>
-                                    <div className="flex justify-between items-center text-sm text-gray-500">
-                                        <span>{order.customerName}</span>
-                                        <span>{new Date(order.createdAt).toLocaleDateString()}</span>
-                                    </div>
-                                </div>
-                            ))}
                         </div>
-                    )}
-                </motion.div>
+                    </div>
+                    <Link href="/admin/testimonials" className="block mt-4 text-center text-deep-space-blue-600 font-bold hover:underline">Manage All Testimonials</Link>
+                </div>
             </div>
         </div>
     )

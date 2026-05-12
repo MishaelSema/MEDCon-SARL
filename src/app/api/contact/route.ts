@@ -1,58 +1,70 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getDatabase } from '@/lib/mongodb'
 import { sendEmail } from '@/lib/nodemailer'
-import { getAdminEmail } from '@/lib/auth'
+
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'medcocoltd@gmail.com'
 
 export async function POST(request: NextRequest) {
     try {
         const data = await request.json()
-        const { name, email, subject, message } = data
+        const { name, email, phone, service, message } = data
 
-        if (!name || !email || !subject || !message) {
-            return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
+        if (!name || !email || !message) {
+            return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
         }
 
-        // Save to database
-        const db = await getDatabase()
-        await db.collection('contacts').insertOne({
-            ...data,
-            createdAt: new Date(),
-            read: false
-        })
+        const { getDatabase } = await import('@/lib/mongodb')
+        
+        try {
+            const db = await getDatabase()
+            await db.collection('contacts').insertOne({
+                name,
+                email,
+                phone,
+                service,
+                message,
+                createdAt: new Date(),
+                read: false,
+            })
+        } catch (dbError) {
+            console.log('MongoDB not configured, skipping database insert')
+        }
 
-        // Send email notification to Admin
-        const adminEmail = getAdminEmail()
-
-        // Validate we have somewhere to send it
-        if (adminEmail) {
-            await sendEmail({
-                to: adminEmail,
-                subject: `New Contact Form: ${subject}`,
-                html: `
-                <h2>New Message from CalmiCasa Contact Form</h2>
+        await sendEmail({
+            to: ADMIN_EMAIL,
+            subject: `New Inquiry from ${name} - MED Construction`,
+            html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #1f2937;">New Contact Form Submission</h2>
                 <p><strong>Name:</strong> ${name}</p>
                 <p><strong>Email:</strong> ${email}</p>
-                <p><strong>Subject:</strong> ${subject}</p>
+                ${phone ? `<p><strong>Phone:</strong> ${phone}</p>` : ''}
+                ${service ? `<p><strong>Service:</strong> ${service}</p>` : ''}
                 <p><strong>Message:</strong></p>
-                <blockquote style="background: #f9f9f9; padding: 10px; border-left: 4px solid #ccc;">
+                <blockquote style="background: #fefce8; padding: 15px; border-left: 4px solid #9cc639; margin: 10px 0;">
                     ${message.replace(/\n/g, '<br>')}
                 </blockquote>
-            `
-            })
-        }
+            </div>
+            `,
+        })
 
-        // Send confirmation to User
         await sendEmail({
             to: email,
-            subject: 'We received your message - CalmiCasa',
+            subject: 'Thank you for contacting MED Construction',
             html: `
-            <h2>Hi ${name},</h2>
-            <p>Thanks for reaching out to CalmiCasa. We have received your message regarding "<strong>${subject}</strong>".</p>
-            <p>Our team will review it and get back to you as soon as possible.</p>
-            <br>
-            <p>Best regards,</p>
-            <p>The CalmiCasa Team</p>
-        `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #1f2937;">Hi ${name},</h2>
+                <p>Thank you for reaching out to MED Construction!</p>
+                <p>We have received your message and our team will review it shortly. We will get back to you within 24 hours.</p>
+                <p>Best regards,<br><strong>The MED Construction Team</strong></p>
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
+                    <p style="color: #666; font-size: 14px;">
+                        <strong>Phone:</strong> +237 671 911 489<br>
+                        <strong>Email:</strong> medcocoltd@gmail.com<br>
+                        <strong>Location:</strong> Yaounde, Cameroon
+                    </p>
+                </div>
+            </div>
+            `,
         })
 
         return NextResponse.json({ success: true })
@@ -68,16 +80,8 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // const token = authHeader.substring(7)
-    // We import verifyToken dynamically to avoid circular dependencies if any, 
-    // or just assume standard import which is safer.
-    // Ideally we import it at the top.
-
     try {
-        // Simple auth check for now. In "strict" mode we would verify token.
-        // Assuming verifyToken is imported.
-        // Let's rely on the fact that we can add the import.
-
+        const { getDatabase } = await import('@/lib/mongodb')
         const db = await getDatabase()
         const contacts = await db.collection('contacts').find({}).sort({ createdAt: -1 }).toArray()
         return NextResponse.json(contacts)

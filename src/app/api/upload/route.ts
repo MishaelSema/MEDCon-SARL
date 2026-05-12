@@ -1,54 +1,38 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { supabase, bucketName } from '@/lib/supabase'
-import { verifyToken } from '@/lib/auth'
+import { v2 as cloudinary } from 'cloudinary'
+import { NextResponse } from 'next/server'
 
-const checkAuth = (request: NextRequest) => {
-    const authHeader = request.headers.get('authorization')
-    if (!authHeader || !authHeader.startsWith('Bearer ')) return null
-    return verifyToken(authHeader.substring(7))
-}
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+})
 
-export async function POST(request: NextRequest) {
-    const user = checkAuth(request)
-    if (!user || (!user.isAdmin)) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+export async function POST(request: Request) {
+  try {
+    const formData = await request.formData()
+    const file = formData.get('file') as File
+    
+    if (!file) {
+      return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
-    try {
-        const formData = await request.formData()
-        const file = formData.get('file') as File
+    const bytes = await file.arrayBuffer()
+    const buffer = Buffer.from(bytes)
+    const base64 = buffer.toString('base64')
+    const dataUri = `data:${file.type};base64,${base64}`
 
-        if (!file) {
-            return NextResponse.json({ error: 'No file provided' }, { status: 400 })
-        }
+    const result = await cloudinary.uploader.upload(dataUri, {
+      folder: 'medcon-sarl',
+      resource_type: 'auto',
+    })
 
-        const buffer = await file.arrayBuffer()
-        const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '')}`
-
-        // Upload to Supabase Storage
-        const { data, error } = await supabase
-            .storage
-            .from(bucketName)
-            .upload(filename, buffer, {
-                contentType: file.type,
-                upsert: false
-            })
-
-        if (error) {
-            console.error('Supabase Upload Error:', error)
-            throw error
-        }
-
-        // Get Public URL
-        const { data: { publicUrl } } = supabase
-            .storage
-            .from(bucketName)
-            .getPublicUrl(filename)
-
-        return NextResponse.json({ success: true, url: publicUrl, filename })
-
-    } catch (error: any) {
-        console.error('Upload error:', error)
-        return NextResponse.json({ error: error.message || 'Upload failed' }, { status: 500 })
-    }
+    return NextResponse.json({
+      success: true,
+      url: result.secure_url,
+      publicId: result.public_id,
+    })
+  } catch (error) {
+    console.error('Upload error:', error)
+    return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
+  }
 }
