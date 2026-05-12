@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Eye, EyeOff } from 'lucide-react'
+import Image from 'next/image'
+import logo from '@/assets/MEDConSARL_logo.png'
 
 export default function AdminLogin() {
     const router = useRouter()
@@ -43,10 +45,7 @@ export default function AdminLogin() {
         <div className="min-h-screen bg-deep-space-blue-950 flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl">
                 <div className="text-center mb-8">
-                    <div className="w-16 h-16 bg-yellow-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span className="text-deep-space-blue-900 font-bold text-2xl">M</span>
-                    </div>
-                    <h1 className="text-2xl font-bold text-gray-900">MEDCon Admin</h1>
+                    <Image src={logo} alt="MEDCon SARL" width={180} height={72} className="h-18 w-auto mx-auto mb-4" />
                     <p className="text-gray-500 text-sm mt-1">Sign in to your dashboard</p>
                 </div>
 

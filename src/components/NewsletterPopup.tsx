@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import { X, Download, Check } from 'lucide-react'
+import logo from '@/assets/MEDConSARL_logo.png'
 
 export default function NewsletterPopup() {
     const [isOpen, setIsOpen] = useState(false)
@@ -12,16 +13,18 @@ export default function NewsletterPopup() {
     const [subscribed, setSubscribed] = useState(false)
 
     useEffect(() => {
-        const hasSeenPopup = sessionStorage.getItem('med-popup-seen')
-        if (!hasSeenPopup) {
-            const timer = setTimeout(() => setIsOpen(true), 5000)
-            return () => clearTimeout(timer)
-        }
+        const popupDismissed = localStorage.getItem('med-popup-dismissed')
+        const popupSubscribed = localStorage.getItem('med-popup-subscribed')
+        
+        if (popupDismissed || popupSubscribed) return
+        
+        const timer = setTimeout(() => setIsOpen(true), 5000)
+        return () => clearTimeout(timer)
     }, [])
 
     const handleClose = () => {
         setIsOpen(false)
-        sessionStorage.setItem('med-popup-seen', 'true')
+        localStorage.setItem('med-popup-dismissed', 'true')
     }
 
     const handleSubscribe = async (e: React.FormEvent) => {
@@ -37,7 +40,10 @@ export default function NewsletterPopup() {
                 console.error('Subscription error:', error)
             }
             setSubscribed(true)
-            sessionStorage.setItem('med-popup-seen', 'true')
+            localStorage.setItem('med-popup-subscribed', 'true')
+            localStorage.setItem('med-popup-dismissed', 'true')
+            
+            setTimeout(() => setIsOpen(false), 2000)
         }
     }
 

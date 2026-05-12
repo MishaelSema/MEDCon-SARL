@@ -2,11 +2,13 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { 
     LayoutDashboard, FolderOpen, Briefcase, MessageSquare, Star, 
     LogOut, Menu, X, Clock, Users
 } from 'lucide-react'
+import logo from '@/assets/MEDConSARL_logo.png'
 
 const navItems = [
     { href: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -37,12 +39,10 @@ export default function AdminSidebar({ stats }: AdminSidebarProps) {
             <aside className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-deep-space-blue-900 text-white transform transition-transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
                 <div className="p-6 h-full flex flex-col">
                     <div className="flex items-center gap-3 mb-8">
-                        <div className="w-10 h-10 bg-yellow-green-500 rounded-full flex items-center justify-center">
-                            <span className="text-deep-space-blue-900 font-bold">M</span>
-                        </div>
+                        <Image src={logo} alt="MEDCon SARL" width={40} height={40} className="h-10 w-auto" />
                         <div>
-                            <h2 className="font-bold text-lg">MEDCon</h2>
-                            <p className="text-xs text-gray-400">Admin Panel</p>
+                            <h2 className="font-bold text-lg text-white">Admin</h2>
+                            <p className="text-xs text-gray-400">Dashboard</p>
                         </div>
                     </div>
 
