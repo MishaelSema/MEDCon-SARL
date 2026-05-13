@@ -67,9 +67,9 @@ export default function AdminSidebar({ stats }: AdminSidebarProps) {
 
     return (
         <>
-            <aside className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-deep-space-blue-900 text-white transform transition-transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
-                <div className="p-6 h-full flex flex-col">
-                    <div className="flex items-center gap-3 mb-8">
+            <aside className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-deep-space-blue-900 text-white transform transition-transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 flex flex-col h-screen overflow-hidden`}>
+                <div className="p-6 flex flex-col h-full">
+                    <div className="flex items-center gap-3 mb-4 shrink-0">
                         <Image src={logo} alt="MEDCon SARL" width={40} height={40} className="h-10 w-auto" />
                         <div>
                             <h2 className="font-bold text-lg text-white">Admin</h2>
@@ -77,7 +77,7 @@ export default function AdminSidebar({ stats }: AdminSidebarProps) {
                         </div>
                     </div>
 
-                    <nav className="flex-1 space-y-1">
+                    <nav className="flex-1 overflow-y-auto space-y-1 scrollbar-thin scrollbar-thumb-deep-space-blue-700 hover:scrollbar-thumb-deep-space-blue-600">
                         {navItems.map((item) => (
                             <Link
                                 key={item.href}
@@ -107,7 +107,7 @@ export default function AdminSidebar({ stats }: AdminSidebarProps) {
                         ))}
                     </nav>
 
-                    <div className="pt-4 border-t border-deep-space-blue-800">
+                    <div className="pt-4 border-t border-deep-space-blue-800 shrink-0">
                         <button
                             onClick={handleLogout}
                             className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-deep-space-blue-800 transition-colors w-full text-left text-gray-300"
