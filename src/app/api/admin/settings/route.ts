@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
-
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'BOOMINATI100$'
+import { getDatabase } from '@/lib/mongodb'
 
 export async function POST(request: NextRequest) {
     try {
@@ -16,22 +15,30 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Missing passwords' }, { status: 400 })
         }
 
-        const isValid = ADMIN_PASSWORD.startsWith('$2')
-            ? await bcrypt.compare(currentPassword, ADMIN_PASSWORD)
-            : currentPassword === ADMIN_PASSWORD
+        const db = await getDatabase()
+        const admin = await db.collection('admins').findOne({ role: 'admin' })
+
+        if (!admin) {
+            return NextResponse.json({ error: 'No admin found' }, { status: 404 })
+        }
+
+        const isValid = await bcrypt.compare(currentPassword, admin.password)
         
         if (!isValid) {
             return NextResponse.json({ error: 'Current password is incorrect' }, { status: 400 })
         }
 
         const hashedPassword = await bcrypt.hash(newPassword, 10)
-        const fs = await import('fs')
-        const path = await import('path')
-        const envPath = path.join(process.cwd(), '.env.local')
-
-        let envContent = fs.readFileSync(envPath, 'utf-8')
-        envContent = envContent.replace(/ADMIN_PASSWORD=.*/, `ADMIN_PASSWORD=${hashedPassword}`)
-        fs.writeFileSync(envPath, envContent)
+        
+        await db.collection('admins').updateOne(
+            { role: 'admin' },
+            { 
+                $set: { 
+                    password: hashedPassword,
+                    updatedAt: new Date()
+                }
+            }
+        )
 
         return NextResponse.json({ success: true, message: 'Password updated successfully' })
     } catch (error) {

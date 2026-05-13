@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { 
     LayoutDashboard, FolderOpen, Briefcase, MessageSquare, Star, 
-    LogOut, Menu, X, Clock, Users
+    LogOut, Menu, X, Clock, Users, Settings
 } from 'lucide-react'
 import logo from '@/assets/MEDConSARL_logo.png'
 
@@ -17,6 +17,7 @@ const navItems = [
     { href: '/admin/services', icon: Briefcase, label: 'Services' },
     { href: '/admin/testimonials', icon: Star, label: 'Testimonials' },
     { href: '/admin/contacts', icon: MessageSquare, label: 'Messages' },
+    { href: '/admin/settings', icon: Settings, label: 'Settings' },
 ]
 
 interface AdminSidebarProps {
