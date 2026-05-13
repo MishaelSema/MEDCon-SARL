@@ -28,18 +28,36 @@ export default function AdminSidebar({ stats }: AdminSidebarProps) {
     const pathname = usePathname()
     const router = useRouter()
     const [sidebarOpen, setSidebarOpen] = useState(false)
-    const [daysLeft, setDaysLeft] = useState<number | null>(null)
+    const [timeLeft, setTimeLeft] = useState<{ days: number; hours: number; minutes: number; seconds: number } | null>(null)
 
     useEffect(() => {
         const loginTime = localStorage.getItem('admin-login-time')
-        if (loginTime) {
-            const expiresIn = 30 * 24 * 60 * 60 * 1000
+        if (!loginTime) return
+
+        const expiresIn = 30 * 24 * 60 * 60 * 1000
+        
+        const updateTimeLeft = () => {
             const elapsed = Date.now() - parseInt(loginTime)
             const remaining = expiresIn - elapsed
-            const days = Math.max(0, Math.ceil(remaining / (24 * 60 * 60 * 1000)))
-            setDaysLeft(days)
+            
+            if (remaining <= 0) {
+                localStorage.removeItem('admin-token')
+                localStorage.removeItem('admin-login-time')
+                router.push('/admin/login')
+                return
+            }
+            
+            const days = Math.floor(remaining / (24 * 60 * 60 * 1000))
+            const hours = Math.floor((remaining % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000))
+            const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000))
+            const seconds = Math.floor((remaining % (60 * 1000)) / 1000)
+            setTimeLeft({ days, hours, minutes, seconds })
         }
-    }, [])
+
+        updateTimeLeft()
+        const interval = setInterval(updateTimeLeft, 1000)
+        return () => clearInterval(interval)
+    }, [router])
 
     const handleLogout = () => {
         localStorage.removeItem('admin-token')
@@ -102,10 +120,16 @@ export default function AdminSidebar({ stats }: AdminSidebarProps) {
                     <div className="mt-4 p-4 bg-deep-space-blue-800 rounded-xl">
                         <div className="flex items-center gap-2 text-xs text-gray-400 mb-1">
                             <Clock className="w-3 h-3" />
-                            Session expires in
+                            {timeLeft ? 'Session expires in' : 'Loading...'}
                         </div>
-                        <p className="font-bold text-yellow-green-400">
-                            {daysLeft !== null ? `${daysLeft} days` : '...'}
+                        <p className="font-bold text-yellow-green-400 font-mono">
+                            {timeLeft ? (
+                                timeLeft.days > 0 
+                                    ? `${timeLeft.days}d ${timeLeft.hours}h ${timeLeft.minutes}m`
+                                    : timeLeft.hours > 0
+                                        ? `${timeLeft.hours}h ${timeLeft.minutes}m ${timeLeft.seconds}s`
+                                        : `${timeLeft.minutes}m ${timeLeft.seconds}s`
+                            ) : '--'}
                         </p>
                     </div>
                 </div>
