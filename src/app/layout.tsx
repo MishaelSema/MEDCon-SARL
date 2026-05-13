@@ -5,6 +5,7 @@ import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
 import NewsletterPopup from '@/components/NewsletterPopup'
+import WelcomePopup from '@/components/WelcomePopup'
 import StructuredData from '@/components/StructuredData'
 import { LanguageProvider } from '@/context/LanguageContext'
 import { Toaster } from 'react-hot-toast'
@@ -114,6 +115,7 @@ export default function RootLayout({
           <Footer />
           <WhatsAppButton />
           <NewsletterPopup />
+          <WelcomePopup />
           <Toaster position="top-center" />
         </LanguageProvider>
       </body>
