@@ -52,7 +52,7 @@ export default function AdminLogin() {
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-2">Email</label>
-                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full p-4 rounded-xl bg-gray-50 border-2 border-gray-200 focus:border-deep-space-blue-500 focus:outline-none" placeholder="admin@example.com" />
+                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full p-4 rounded-xl bg-gray-50 border-2 border-gray-200 focus:border-deep-space-blue-500 focus:outline-none" placeholder="your@email.com" />
                     </div>
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-2">Password</label>
@@ -70,10 +70,6 @@ export default function AdminLogin() {
                         {loading ? 'Signing in...' : 'Sign In'}
                     </button>
                 </form>
-
-                <div className="mt-6 text-center text-sm text-gray-500">
-                    <p>Default: admin@medcon.com / admin123</p>
-                </div>
             </motion.div>
         </div>
     )

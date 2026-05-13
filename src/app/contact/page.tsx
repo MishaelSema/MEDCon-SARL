@@ -158,7 +158,7 @@ export default function ContactPage() {
                             <div className="flex items-center justify-center gap-6 text-sm text-gray-500 mt-4">
                                 <a href="tel:+237671911489" className="hover:text-deep-space-blue-600">+237 671 911 489</a>
                                 <span>|</span>
-                                <a href="mailto:medconsarl@gmail.com" className="hover:text-deep-space-blue-600">medconsarl@gmail.com</a>
+                                <a href="mailto:support@medconsarl.com" className="hover:text-deep-space-blue-600">support@medconsarl.com</a>
                             </div>
                         </form>
                     )}

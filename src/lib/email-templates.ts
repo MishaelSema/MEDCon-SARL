@@ -74,7 +74,7 @@ export const BASE_TEMPLATE = (content: string, footerExtra = '') => `
                                 📞 +237 671 911 489
                             </p>
                             <p style="color: rgba(255,255,255,0.8); font-size: 13px; margin: 0 0 8px;">
-                                ✉️ medconsarl@gmail.com
+                                ✉️ support@medconsarl.com
                             </p>
                             <p style="color: rgba(255,255,255,0.8); font-size: 13px; margin: 0 0 20px;">
                                 📍 Yaoundé, Cameroon
@@ -213,7 +213,7 @@ export const thankYouEmail = (name: string) => {
                 <tr>
                     <td style="padding: 8px 0;">
                         <a href="mailto:medcocoltd@gmail.com" style="color: ${COLORS.deepSpaceBlue}; text-decoration: none; font-size: 14px;">
-                            ✉️ medconsarl@gmail.com
+                            ✉️ support@medconsarl.com
                         </a>
                     </td>
                 </tr>
@@ -456,9 +456,9 @@ export const contactReplyEmail = (data: {
                 </tr>
                 <tr>
                     <td style="padding: 8px 0;">
-                        <a href="mailto:medconsarl@gmail.com" style="display: inline-flex; align-items: center; gap: 8px; color: ${COLORS.deepSpaceBlue}; text-decoration: none; font-size: 14px; font-weight: 500;">
+                        <a href="mailto:support@medconsarl.com" style="display: inline-flex; align-items: center; gap: 8px; color: ${COLORS.deepSpaceBlue}; text-decoration: none; font-size: 14px; font-weight: 500;">
                             <span style="background-color: ${COLORS.yellowGreen}; color: ${COLORS.deepSpaceBlue}; padding: 8px; border-radius: 50%;">✉️</span>
-                            medconsarl@gmail.com
+                            support@medconsarl.com
                         </a>
                     </td>
                 </tr>
@@ -567,9 +567,9 @@ export const guideDownloadEmail = (data: {
                 </tr>
                 <tr>
                     <td style="padding: 8px 0;">
-                        <a href="mailto:medconsarl@gmail.com" style="display: inline-flex; align-items: center; gap: 8px; color: ${COLORS.deepSpaceBlue}; text-decoration: none; font-size: 14px; font-weight: 500;">
+                        <a href="mailto:support@medconsarl.com" style="display: inline-flex; align-items: center; gap: 8px; color: ${COLORS.deepSpaceBlue}; text-decoration: none; font-size: 14px; font-weight: 500;">
                             <span style="background-color: ${COLORS.yellowGreen}; color: ${COLORS.deepSpaceBlue}; padding: 8px; border-radius: 50%;">✉️</span>
-                            medconsarl@gmail.com
+                            support@medconsarl.com
                         </a>
                     </td>
                 </tr>

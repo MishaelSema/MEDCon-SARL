@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { sendEmail } from '@/lib/nodemailer'
 import { contactNotificationEmail, thankYouEmail, contactReplyEmail } from '@/lib/email-templates'
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'medconsarl@gmail.com'
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'support@medconsarl.com'
 
 export async function GET(request: NextRequest) {
     try {

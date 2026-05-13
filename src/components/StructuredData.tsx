@@ -13,7 +13,7 @@ export default function StructuredData() {
       description: 'Professional construction, renovation, and real estate services in Yaoundé, Cameroon.',
       url: SITE_URL,
       telephone: '+237671911489',
-      email: 'medconsarl@gmail.com',
+      email: 'support@medconsarl.com',
       address: {
         '@type': 'PostalAddress',
         addressLocality: 'Yaoundé',
