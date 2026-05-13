@@ -5,7 +5,6 @@ import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
 import NewsletterPopup from '@/components/NewsletterPopup'
-import WelcomePopup from '@/components/WelcomePopup'
 import StructuredData from '@/components/StructuredData'
 import { LanguageProvider } from '@/context/LanguageContext'
 import { Toaster } from 'react-hot-toast'
@@ -106,6 +105,11 @@ export default function RootLayout({
         <link rel="icon" type="image/png" href="/og-image.png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <meta name="theme-color" content="#073856" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `var _smartsupp = _smartsupp || {}; _smartsupp.key = 'a34857450c4779f4666f8eec847186481206a88c'; window.smartsupp||(function(d) { var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[]; s=d.getElementsByTagName('script')[0];c=d.createElement('script'); c.type='text/javascript';c.charset='utf-8';c.async=true; c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s); })(document);`
+          }}
+        />
       </head>
       <body className={`${inter.className} antialiased`}>
         <LanguageProvider>
@@ -115,7 +119,6 @@ export default function RootLayout({
           <Footer />
           <WhatsAppButton />
           <NewsletterPopup />
-          <WelcomePopup />
           <Toaster position="top-center" />
         </LanguageProvider>
       </body>
