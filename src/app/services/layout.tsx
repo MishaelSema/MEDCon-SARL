@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://medconstruction-cm.com'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://medconsarl.com'
 
 export async function generateMetadata(): Promise<Metadata> {
   return {

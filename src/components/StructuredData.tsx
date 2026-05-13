@@ -4,12 +4,14 @@ import { useEffect } from 'react'
 
 export default function StructuredData() {
   useEffect(() => {
+    const SITE_URL = 'https://medconsarl.com'
+    
     const schema = {
       '@context': 'https://schema.org',
       '@type': 'LocalBusiness',
       name: 'MEDCon SARL',
       description: 'Professional construction, renovation, and real estate services in Yaoundé, Cameroon.',
-      url: 'https://medconstruction-cm.com',
+      url: SITE_URL,
       telephone: '+237671911489',
       email: 'medconsarl@gmail.com',
       address: {
@@ -23,7 +25,7 @@ export default function StructuredData() {
       },
       openingHours: 'Mo-Fr 08:00-18:00',
       priceRange: '$$',
-      image: 'https://medconstruction-cm.com/og-image.png',
+      image: `${SITE_URL}/og-image.png`,
       sameAs: [
         'https://www.facebook.com/MEDCon01',
       ],
