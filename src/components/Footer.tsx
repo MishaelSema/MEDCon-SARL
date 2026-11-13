@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Mail, Phone, MapPin, Facebook, Instagram } from 'lucide-react'
+import { Mail, Phone, MapPin, Instagram } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
 import logo from '@/assets/MEDConSARL_logo.png'
 
@@ -24,7 +24,6 @@ const Footer = () => {
   ]
 
   const socialLinks = [
-    { name: 'Facebook', href: 'https://www.facebook.com/MEDCon01', icon: Facebook },
     { name: 'Instagram', href: '#', icon: Instagram },
   ]
 

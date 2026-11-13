@@ -33,6 +33,10 @@ export default function StructuredData() {
             'Real Estate Development',
             'Project Management',
             'Civil Engineering',
+            'Med Con SARL',
+            'Med Construction SARL',
+            'Construction Cameroon',
+            'Building Cameroon',
           ],
           areaServed: {
             '@type': 'GeoCircle',
@@ -59,7 +63,6 @@ export default function StructuredData() {
             },
           ],
           sameAs: [
-            'https://www.facebook.com/MEDCon01',
             'https://www.instagram.com/MEDConSARL',
             'https://www.linkedin.com/company/MEDConSARL',
           ],
